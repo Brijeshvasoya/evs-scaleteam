@@ -1,10 +1,21 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { Button, Input } from "reactstrap";
 import { useSelector } from "react-redux";
-
+import Modal from "../../components/Modal";
 const Index = () => {
   const activeUser = JSON.parse(localStorage.getItem("active_user"));
-  const role = activeUser?.role||"";
+  const role = activeUser?.role || "";
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const toggleModal = () => {
+    setModalOpen(!modalOpen);
+  };
+
+  const addEvent = () => {
+    alert("event will add");
+    toggleModal();
+  };
+
   return (
     <Fragment>
       {role === "Admin" ? (
@@ -17,7 +28,8 @@ const Index = () => {
           <Button
             type="submit"
             color="primary"
-            className="w-64 py-3 text-white font-medium rounded-lg bg-slate-800 hover:bg-slate-600 focus:outline-none focus:ring-2 focus:bg-gray-500"
+            onClick={toggleModal}
+            className="w-64 py-3 text-white font-medium rounded-lg bg-slate-800 hover:bg-slate-600 "
           >
             Add Event
           </Button>
@@ -47,6 +59,13 @@ const Index = () => {
           </Button>
         </div>
       )}
+      {modalOpen ? (
+        <Modal
+          modalOpen={modalOpen}
+          toggleModal={toggleModal}
+          addEvent={addEvent}
+        ></Modal>
+      ) : null}
     </Fragment>
   );
 };
