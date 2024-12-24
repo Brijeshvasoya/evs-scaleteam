@@ -9,18 +9,21 @@ const PublicRoute = (props) => {
   const { Component } = props;
   const navigate = useNavigate();
   const { activeUser } = useSelector((state) => state?.user);
+  
   useEffect(()=>{
     const user= localStorage.getItem("active_user");
     if(!user){
      navigate('/')
     }
    },[])
+
+
   useEffect(() => {
     const token = activeUser?.isVerified || JSON.parse(localStorage.getItem("active_user"))?.isVerified;
     if (token) {
       navigate("/dashboard");
     }
-  }, [activeUser, navigate]);
+  }, [activeUser]);
 
   return <Component />;
 };
@@ -36,12 +39,14 @@ const ProtectRoute = (props) => {
     navigate('/')
    }
   },[])
+
+  
   useEffect(() => {
     const token = activeUser?.isVerified || JSON.parse(localStorage.getItem("active_user"))?.isVerified;
     if (!token) {
       navigate("/");
     }
-  }, [activeUser, navigate]);
+  }, [activeUser]);
 
   return (
     <div className="flex">

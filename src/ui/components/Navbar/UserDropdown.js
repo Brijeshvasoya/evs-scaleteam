@@ -20,12 +20,12 @@ const UserDropdown = (props) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const signOut = () => {
-    navigate("/");
     const activeUser = JSON.parse(localStorage.getItem("active_user"));
     const newUser = { ...activeUser, isVerified: false };
     dispatch({ type: "EDIT_USER", payload: { data: newUser } });
     localStorage.removeItem("active_user");
     removeCookie("Remember");
+    navigate("/");
     toast.success("Logout Successfully", { autoClose: 1000 });
   };
 
