@@ -8,6 +8,15 @@ const Index = (props) => {
       const user=  JSON.parse(localStorage.getItem("active_user"))
       setUser(user)
     },[])
+
+
+
+    useEffect(()=>{
+
+    },[])
+
+
+    
   return (
     <Fragment>
       <div className="flex justify-between items-center p-4 mx-5 my-5 bg-slate-800 text-white rounded-md shadow-lg">
