@@ -1,6 +1,6 @@
 import { lazy } from 'react';
 
-const DefaultRoute = "/state";
+const DefaultRoute = "/";
 const routes = [
   {
     path: '/',

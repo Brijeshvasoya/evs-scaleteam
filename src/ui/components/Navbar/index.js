@@ -3,20 +3,12 @@ import NavbarUser from "./NavbarUser";
 import { useSelector } from "react-redux";
 
 const Index = (props) => {
-    const [user,setUser]=useState({})
+    const [user,setUser]=useState([])
     useEffect(()=>{
       const user=  JSON.parse(localStorage.getItem("active_user"))
       setUser(user)
     },[])
 
-
-
-    useEffect(()=>{
-
-    },[])
-
-
-    
   return (
     <Fragment>
       <div className="flex justify-between items-center p-4 mx-5 my-5 bg-slate-800 text-white rounded-md shadow-lg">

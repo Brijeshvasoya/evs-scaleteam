@@ -44,10 +44,11 @@ const Index = () => {
         (item) =>
           item?.email === data?.email && item?.password === data?.password
       );
-      if (matchedUser) {      
+      if (matchedUser) {
         const newUser = { ...matchedUser, isVerified: true };
         dispatch({ type: "EDIT_USER", payload: { data: newUser } });
         dispatch({ type: "LOGIN_USER", payload: { data: newUser } });
+        localStorage.setItem("active_user", JSON.stringify(newUser));
         toast.success("Login Successfully", { autoClose: 1000 });
         navigate("/dashboard");
       } else {

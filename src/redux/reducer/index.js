@@ -13,7 +13,6 @@ export const AddUserReducer = (state = initialUserState, action) => {
   switch (action.type) {
     case "ADD_USER":
       newState = [...state.userData, action.payload.data];
-      localStorage.setItem("users", JSON.stringify(newState));
       return { ...state, userData: newState };
     case "EDIT_USER":
       newState = state.userData.map((item) =>
@@ -27,13 +26,6 @@ export const AddUserReducer = (state = initialUserState, action) => {
       return { ...state, userData: newState };
     case "LOGIN_USER":
       newState = action.payload.data;
-      console.log(newState,"newState");
-      
-      localStorage.setItem("active_user", JSON.stringify(newState));
-      return { ...state, activeUser: newState };
-    case "LOGOUT_USER":
-      newState = action.payload.data;
-      localStorage.setItem("active_user", JSON.stringify(newState));
       return { ...state, activeUser: newState };
     default:
       return state;

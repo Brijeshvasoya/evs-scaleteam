@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Menu, User, Power } from "react-feather";
@@ -16,8 +16,12 @@ const UserDropdown = (props) => {
   const navigate = useNavigate();
   const [, removeCookie] = useCookies();
   const { dispatch } = useAddUser();
-  const { activeUser } = useSelector((state) => state?.user);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [user, setUser] = useState([]);
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("active_user"));
+    setUser(user);
+  }, []);
 
   const signOut = () => {
     const activeUser = JSON.parse(localStorage.getItem("active_user"));
@@ -38,7 +42,7 @@ const UserDropdown = (props) => {
           className="flex items-center space-x-2 px-4 py-2 text-white bg-gray-700 rounded-lg hover:bg-gray-600 transition-all"
           caret
         >
-          <span>{activeUser.role}</span>
+          <span>{user.role}</span>
           <Menu />
         </DropdownToggle>
         {dropdownOpen && (
@@ -49,8 +53,8 @@ const UserDropdown = (props) => {
             >
               <span>
                 <User className="inline-block mr-2" />
-                {activeUser
-                  ? `${activeUser.fname} ${activeUser.lname}`
+                {user
+                  ? `${user.fname} ${user.lname}`
                   : "Guest"}
               </span>
             </DropdownItem>
