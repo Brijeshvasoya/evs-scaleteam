@@ -44,7 +44,6 @@ const Index = () => {
       const role = user?.length === 0 ? "Admin" : "User";
       const addUser = { ...data, id: uuidv4(), role: role ,isVerified:false};
       dispatch({ type: "ADD_USER", payload: { data: addUser } });
-      localStorage.setItem("users", JSON.stringify(addUser));
       toast.success("You are Register Successfully", { autoClose: 1000 });
       navigate("/");
     } else {

@@ -30,8 +30,7 @@ const Index = ({toggleModal}) => {
     data.eventdate = moment(data.eventdate).format("DD MMM YYYY");
     const addEvent = { ...data, id: uuidv4()};
     dispatch({ type: "ADD_EVENT", payload: { data: addEvent } });
-    localStorage.setItem("event_data", JSON.stringify(addEvent));
-    toast.success("You are Register Successfully", { autoClose: 1000 });
+    toast.success("Your Event Successfully Add", { autoClose: 1000 });
     toggleModal();
   };
 
