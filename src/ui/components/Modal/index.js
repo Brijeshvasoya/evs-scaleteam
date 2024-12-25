@@ -2,6 +2,7 @@ import React, { Fragment } from "react";
 import { Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 import { Button } from "reactstrap";
 import { X } from "react-feather";
+import "./model.css"
 
 const index = (props) => {
   return (
@@ -9,17 +10,23 @@ const index = (props) => {
       <Modal
         isOpen={props.modalOpen}
         toggle={props.toggleModal}
-        className="flex justify-center"
+        className="modal-container"
       >
-        <div className="fixed  bg-black bg-opacity-50 " />
-
-        {/* <ModalHeader className=" w-auto relative top-0 right-0 p-2 cursor-pointer" onClick={props.toggleModal}>
+        <ModalHeader className="relative">
+            <h1 className="relative top-8 font-bold right-0 p-0">{props.title}</h1>
+          <Button
+            className="absolute top-5 right-0 p-0 cursor-pointer"
+            onClick={props.toggleModal}
+          >
             <X />
-        </ModalHeader> */}
+          </Button>
+        </ModalHeader>
 
-        <ModalBody>{props?.children}</ModalBody>
+        <ModalBody className="bg-white p-8 rounded-lg shadow-lg w-full max-w-4xl">
+          {props?.children}
+        </ModalBody>
 
-        <ModalFooter className=" mt-1flex justify-between  space-x-4">
+        <ModalFooter className="mt-4 flex justify-between space-x-4">
           <Button
             color="secondary"
             onClick={props.toggleModal}

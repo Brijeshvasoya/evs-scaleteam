@@ -2,7 +2,7 @@ import React, { Fragment, useState } from "react";
 import { Button, Input } from "reactstrap";
 import { useSelector } from "react-redux";
 import Modal from "../../components/Modal";
-import AddEvent from "../AddEvent"
+import AddEvent from "../AddEvent";
 const Index = () => {
   const activeUser = JSON.parse(localStorage.getItem("active_user"));
   const role = activeUser?.role || "";
@@ -60,14 +60,17 @@ const Index = () => {
           </Button>
         </div>
       )}
-      {modalOpen ? (
-        <Modal
-          modalOpen={modalOpen}
-          toggleModal={toggleModal}
-          addEvent={addEvent}
-          type="submit"
-        ><AddEvent/></Modal>
-      ) : null}
+      {modalOpen && (
+          <Modal
+            modalOpen={modalOpen}
+            toggleModal={toggleModal}
+            addEvent={addEvent}
+            title="Add Event"
+            type="submit"
+          >
+              <AddEvent />
+          </Modal>
+      )}
     </Fragment>
   );
 };
