@@ -12,11 +12,6 @@ const Index = () => {
     setModalOpen(!modalOpen);
   };
 
-  const addEvent = () => {
-    alert("event will add");
-    toggleModal();
-  };
-
   return (
     <Fragment>
       {role === "Admin" ? (
@@ -64,11 +59,10 @@ const Index = () => {
           <Modal
             modalOpen={modalOpen}
             toggleModal={toggleModal}
-            addEvent={addEvent}
             title="Add Event"
             type="submit"
           >
-              <AddEvent />
+              <AddEvent toggleModal={toggleModal}/>
           </Modal>
       )}
     </Fragment>

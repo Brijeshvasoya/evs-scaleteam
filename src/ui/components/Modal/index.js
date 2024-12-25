@@ -13,9 +13,9 @@ const index = (props) => {
         className="modal-container"
       >
         <ModalHeader className="relative">
-            <h1 className="relative top-8 font-bold right-0 p-0">{props.title}</h1>
+            <h1 className="relative top-8 text-2xl font-semibold right-0 p-0">{props.title}</h1>
           <Button
-            className="absolute top-5 right-0 p-0 cursor-pointer"
+            className="absolute top-8 right-0 p-0 cursor-pointer"
             onClick={props.toggleModal}
           >
             <X />
@@ -26,7 +26,7 @@ const index = (props) => {
           {props?.children}
         </ModalBody>
 
-        <ModalFooter className="mt-4 flex justify-between space-x-4">
+        {/* <ModalFooter className="mt-4 flex justify-between space-x-4">
           <Button
             color="secondary"
             onClick={props.toggleModal}
@@ -51,7 +51,7 @@ const index = (props) => {
               Update Event
             </Button>
           )}
-        </ModalFooter>
+        </ModalFooter> */}
       </Modal>
     </Fragment>
   );

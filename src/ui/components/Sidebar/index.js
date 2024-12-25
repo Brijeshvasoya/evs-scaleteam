@@ -5,6 +5,8 @@ import { useLocation } from "react-router-dom";
 
 const Index = () => {
   const source = require(`../../../logo.png`);
+  const activeUser = JSON.parse(localStorage.getItem("active_user"));
+  const role = activeUser?.role || "";
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -33,19 +35,35 @@ const Index = () => {
               Dashboard
             </Link>
           </li>
-          <li>
-            <Link
-              to="/events"
-              className={`block px-6 py-2 text-lg text-white rounded transition-all focus:ring-2 ${
-                location.pathname === "/events"
-                  ? "bg-gray-500"
-                  : "hover:bg-gray-700"
-              }`}
-            >
-              <Calendar className="mr-3 inline" />
-              Events
-            </Link>
-          </li>
+          {role !== "Admin" ? (
+            <li>
+              <Link
+                to="/events"
+                className={`block px-6 py-2 text-lg text-white rounded transition-all focus:ring-2 ${
+                  location.pathname === "/events"
+                    ? "bg-gray-500"
+                    : "hover:bg-gray-700"
+                }`}
+              >
+                <Calendar className="mr-3 inline" />
+                Events
+              </Link>
+            </li>
+          ) : (
+            <li>
+              <Link
+                to="/user"
+                className={`block px-6 py-2 text-lg text-white rounded transition-all focus:ring-2 ${
+                  location.pathname === "/user"
+                    ? "bg-gray-500"
+                    : "hover:bg-gray-700"
+                }`}
+              >
+                <Calendar className="mr-3 inline" />
+                User
+              </Link>
+            </li>
+          )}
         </ul>
       </div>
     </div>

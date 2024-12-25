@@ -25,6 +25,10 @@ const routes = [
     path: '/events',
     element: lazy(() => import('../../ui/pages/Events')),  
   },
+  {
+    path: '/user',
+    element: lazy(() => import('../../ui/pages/Events')),  
+  },
 ];
 
 export {DefaultRoute, routes };
