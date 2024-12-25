@@ -27,7 +27,7 @@ const routes = [
   },
   {
     path: '/user',
-    element: lazy(() => import('../../ui/pages/Events')),  
+    element: lazy(() => import('../../ui/pages/User')),  
   },
 ];
 

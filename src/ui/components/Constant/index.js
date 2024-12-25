@@ -1,59 +1,104 @@
 export const eventTable = [
     {
-      selector: (row) => row?.ename, // Event Name
+      selector: (row) => row?.ename, 
       name: "Event Name",
       sortField: "ename",
       sortable: true,
-      minWidth: "150px",
+      minWidth: "auto",
     },
     {
-      selector: (row) => row?.hname, // Host Name
+      selector: (row) => row?.hname, 
       name: "Host Name",
       sortField: "hname",
       sortable: true,
-      minWidth: "150px",
+      minWidth: "auto",
     },
     {
-      selector: (row) => row?.eventdate, // Event Date
+      selector: (row) => row?.eventdate, 
       name: "Event Date",
       sortField: "eventdate",
       sortable: true,
-      minWidth: "150px",
+      minWidth: "auto",
     },
     {
-      selector: (row) => row?.hno, // Address 1
+      selector: (row) => row?.hno, 
       name: "Address 1",
       sortField: "hno",
       sortable: true,
-      minWidth: "150px",
+      minWidth: "auto",
     },
     {
-      selector: (row) => row?.address, // Address 2
+      selector: (row) => row?.address, 
       name: "Address 2",
       sortField: "address",
       sortable: true,
-      minWidth: "150px",
+      minWidth: "auto",
     },
     {
-      selector: (row) => row?.vipticket, // VIP Ticket
+      selector: (row) => row?.vipticket, 
       name: "VIP Ticket",
       sortField: "vipticket",
       sortable: true,
-      minWidth: "150px",
+      minWidth: "auto",
     },
     {
-      selector: (row) => row?.vvipticket, // VVIP Ticket
+      selector: (row) => row?.vvipticket, 
       name: "VVIP Ticket",
       sortField: "vvipticket",
       sortable: true,
-      minWidth: "150px",
+      minWidth: "auto",
     },
     {
-      selector: (row) => row?.goldticket, // Gold Ticket
+      selector: (row) => row?.goldticket, 
       name: "Gold Ticket",
       sortField: "goldticket",
       sortable: true,
-      minWidth: "150px",
+      minWidth: "auto",
     },
   ];
+
+  export const userTable=[
+    {
+        selector:(row)=>row?.fname,
+        name:"First Name",
+        sortField:"fname",
+        sortable:true,
+        minWidth:"auto",
+    },
+    {
+        selector:(row)=>row?.lname,
+        name:"Last Name",
+        sortField:"lname",
+        sortable:true,
+        minWidth:"auto",
+    },
+    {
+        selector:(row)=>row?.email,
+        name:"Email",
+        sortField:"email",
+        sortable:true,
+        minWidth:"auto",
+    },
+    {
+        selector:(row)=>row?.age,
+        name:"Age",
+        sortField:"age",
+        sortable:true,
+        minWidth:"auto",
+    },
+    {
+        selector:(row)=>row?.dob,
+        name:"Birth Date",
+        sortField:"dob",
+        sortable:true,
+        minWidth:"auto",
+    },
+    {
+        selector:(row)=>row?.role,
+        name:"Role",
+        sortField:"role",
+        sortable:true,
+        minWidth:"auto",
+    }
+  ]
   
