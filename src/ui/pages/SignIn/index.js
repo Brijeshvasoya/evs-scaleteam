@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import {useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useCookies } from "react-cookie";
 import InputPasswordToggle from "../../components/input-password-toggle";
-import { useAddUser } from "../../../redux/reducer";
 
 import {
   CardTitle,
@@ -19,7 +18,7 @@ import { useForm, Controller } from "react-hook-form";
 
 const Index = () => {
   const navigate = useNavigate();
-  const { dispatch } = useAddUser();
+  const dispatch = useDispatch();
   const { userData } = useSelector((state) => state?.user);
   const source = require(`../../../logo.png`);
   const cover = require(`../../../assets/images/pages/login-cover.webp`);

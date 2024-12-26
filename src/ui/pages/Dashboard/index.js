@@ -12,13 +12,15 @@ const Index = () => {
   const activeUser = JSON.parse(localStorage.getItem("active_user"));
   const role = activeUser?.role || "";
   const [modalOpen, setModalOpen] = useState(false);
+  const [editEvent,setEditEvent]=useState();
 
   const toggleModal = () => {
     setModalOpen(!modalOpen);
   };
 
   const editEventData = (row) => {
-    console.log("Edit Event:", row);
+    setEditEvent(row);
+    setModalOpen(!modalOpen);
   };
 
   const deleteEvent = (id) => {
@@ -82,10 +84,10 @@ const Index = () => {
         <Modal
           modalOpen={modalOpen}
           toggleModal={toggleModal}
-          title="Add Event"
+          title={(!editEvent?"Add Event":"Edit Event")}
           type="submit"
         >
-          <AddEvent toggleModal={toggleModal} />
+          <AddEvent toggleModal={toggleModal} editEvent={editEvent} />
         </Modal>
       )}
     </Fragment>

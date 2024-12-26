@@ -1,10 +1,10 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
 import DatePicker from "../../components/DatePicker";
 import { toast } from "react-toastify";
-import { useAddUser } from "../../../redux/reducer";
+import { useDispatch,useSelector } from "react-redux";
 
 import {
   CardTitle,
@@ -16,8 +16,9 @@ import {
   FormText,
 } from "reactstrap";
 
-const Index = ({toggleModal}) => {
-  const { dispatch } = useAddUser();
+const Index = ({ toggleModal, editEvent }) => {
+    const dispatch = useDispatch();
+  const [edit, setEdit] = useState();
 
   const {
     control,
@@ -25,12 +26,22 @@ const Index = ({toggleModal}) => {
     formState: { errors },
   } = useForm();
 
+  useEffect(() => {
+    setEdit(editEvent);
+  }, [editEvent]);
+
+  console.log(edit, "edit");
+
   const onSubmit = (data, e) => {
     e.preventDefault();
     data.eventdate = moment(data.eventdate).format("DD MMM YYYY");
-    const addEvent = { ...data, id: uuidv4()};
+    if(!editEvent){
+    const addEvent = { ...data, id: uuidv4() };
     dispatch({ type: "ADD_EVENT", payload: { data: addEvent } });
     toast.success("Your Event Successfully Add", { autoClose: 1000 });
+    }else{
+      console.log(data,"edit event")
+    }
     toggleModal();
   };
 
@@ -59,6 +70,7 @@ const Index = ({toggleModal}) => {
                       {...field}
                       type="text"
                       id="ename"
+                      value={edit?.ename || ""}
                       placeholder="Please Enter Event Name"
                       className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
@@ -91,6 +103,7 @@ const Index = ({toggleModal}) => {
                       {...field}
                       type="text"
                       id="hname"
+                      value={edit?.hname || ""}
                       placeholder="Please Enter Host Name"
                       className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
@@ -124,7 +137,11 @@ const Index = ({toggleModal}) => {
                       invalid={errors?.dob && true}
                       onChange={(e) => onChange(e[0])}
                       className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      value={value}
+                      value={
+                        edit?.eventdate
+                          ? moment(edit?.eventdate).toDate()
+                          : value
+                      }
                     />
                   );
                 }}
@@ -156,6 +173,7 @@ const Index = ({toggleModal}) => {
                       {...field}
                       type="text"
                       id="hno"
+                      value={edit?.hno || ""}
                       placeholder="Please Enter House/Flat no/Office no/Floor no"
                       className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
@@ -188,6 +206,7 @@ const Index = ({toggleModal}) => {
                       {...field}
                       type="text"
                       id="address"
+                      value={edit?.address || ""}
                       placeholder="Please Enter Address"
                       className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
@@ -234,6 +253,7 @@ const Index = ({toggleModal}) => {
                       {...field}
                       type="text"
                       id="vipticket"
+                      value={edit?.vipticket || ""}
                       placeholder="Rate"
                       className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
@@ -258,6 +278,7 @@ const Index = ({toggleModal}) => {
                       {...field}
                       type="text"
                       id="vvipticket"
+                      value={edit?.vvipticket || ""}
                       placeholder="Rate"
                       className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
@@ -282,6 +303,7 @@ const Index = ({toggleModal}) => {
                       {...field}
                       type="text"
                       id="goldticket"
+                      value={edit?.goldticket || ""}
                       placeholder="Rate"
                       className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
@@ -300,7 +322,7 @@ const Index = ({toggleModal}) => {
               block
               className="w-full py-3 my-3 text-white font-medium rounded-lg bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
-              Submit
+              {!edit?"Submit":"Edit"}
             </Button>
           </Form>
         </div>

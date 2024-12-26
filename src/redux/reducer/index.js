@@ -33,6 +33,12 @@ export const AddUserReducer = (state = initialUserState, action) => {
       newState = [...state.eventData, action.payload.data];
       localStorage.setItem("event_data", JSON.stringify(newState));
       return { ...state, eventData: newState };
+    case "EDIT_EVENT":
+      newState = state.eventData.map((item) =>
+        item.id === action.payload.data.id ? action.payload.data : item
+      );
+      localStorage.setItem("event_data", JSON.stringify(newState));
+      return { ...state, eventData: newState };
     default:
       return state;
   }

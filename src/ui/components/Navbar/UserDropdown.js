@@ -1,6 +1,6 @@
 import React, { useState,useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch,useSelector } from "react-redux";
 import { Menu, User, Power } from "react-feather";
 import {
   Dropdown,
@@ -9,13 +9,12 @@ import {
   DropdownItem,
 } from "reactstrap";
 import { useCookies } from "react-cookie";
-import { useAddUser } from "../../../redux/reducer";
 import { toast } from "react-toastify";
 
 const UserDropdown = (props) => {
   const navigate = useNavigate();
   const [, removeCookie] = useCookies();
-  const { dispatch } = useAddUser();
+  const dispatch = useDispatch();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [user, setUser] = useState([]);
   useEffect(() => {

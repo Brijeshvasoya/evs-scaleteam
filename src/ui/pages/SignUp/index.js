@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 
 import InputPasswordToggle from "../../components/input-password-toggle";
 import DatePicker from "../../components/DatePicker";
-import { useAddUser } from "../../../redux/reducer";
+import { useDispatch } from "react-redux";
 
 import {
   CardTitle,
@@ -21,7 +21,7 @@ import { useForm, Controller } from "react-hook-form";
 
 const Index = () => {
   const navigate = useNavigate();
-  const { dispatch } = useAddUser();
+  const dispatch = useDispatch();
   const source = require(`../../../logo.png`);
   const cover = require(`../../../assets/images/pages/sign-up.avif`);
 
@@ -35,14 +35,14 @@ const Index = () => {
 
   const password = watch("password");
 
-  const onSubmit = (data,e) => {
-    e.preventDefault()
+  const onSubmit = (data, e) => {
+    e.preventDefault();
     if (data) {
       delete data["cpassword"];
       data.dob = moment(data.dob).format("DD MMM YYYY");
       const user = JSON.parse(localStorage.getItem("users")) || [];
       const role = user?.length === 0 ? "Admin" : "User";
-      const addUser = { ...data, id: uuidv4(), role: role ,isVerified:false};
+      const addUser = { ...data, id: uuidv4(), role: role, isVerified: false };
       dispatch({ type: "ADD_USER", payload: { data: addUser } });
       toast.success("You are Register Successfully", { autoClose: 1000 });
       navigate("/");
@@ -221,8 +221,7 @@ const Index = () => {
                 control={control}
                 rules={{
                   required: "Date of Birth is required",
-                  }
-                }
+                }}
                 render={({ field: { onChange, value } }) => {
                   return (
                     <DatePicker
