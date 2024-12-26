@@ -1,31 +1,71 @@
 import React, { Fragment, useState } from "react";
 import { Button, Input } from "reactstrap";
 import Table from "../../components/Table";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Modal from "../../components/Modal";
 import AddEvent from "../AddEvent";
 import { eventTable } from "../../components/Constant";
+import ConfirmationModal from "../../components/Alert";
+import { toast } from "react-toastify";
+import Select from "react-select";
 
 const Index = () => {
-  // const { eventData } = useSelector((state) => state.user);
-  const eventData = JSON.parse(localStorage.getItem("event_data")) || [];
-  const activeUser = JSON.parse(localStorage.getItem("active_user"));
+  const dispatch = useDispatch();
+  const { eventData } = useSelector((state) => state.user);
+  const { activeUser } = useSelector((state) => state.user);
   const role = activeUser?.role || "";
   const [modalOpen, setModalOpen] = useState(false);
-  const [editEvent,setEditEvent]=useState();
+  const [editEvent, setEditEvent] = useState();
+  const [data, setData] = useState(eventData);
+  const [sort, setSort] = useState();
 
   const toggleModal = () => {
     setModalOpen(!modalOpen);
+    setEditEvent(null);
   };
 
   const editEventData = (row) => {
     setEditEvent(row);
     setModalOpen(!modalOpen);
   };
-
-  const deleteEvent = (id) => {
-    console.log("Delete Event:", id);
+  const handleChange = (e) => {
+    const newData = eventData.filter((row) => {
+      return row[sort].toLowerCase().includes(e.target.value.toLowerCase());
+    });
+    setData(newData);
   };
+
+  const deleteEvent = (row) => {
+    ConfirmationModal(
+      "warning",
+      "Are you sure?",
+      "You won't be able to revert this!",
+      "Yes, delete it!",
+      true
+    ).then((result) => {
+      if (result.isConfirmed) {
+        ConfirmationModal(
+          "success",
+          "Deleted!",
+          "Employee has been deleted.",
+          "ok",
+          false
+        ).then(() => {
+          dispatch({ type: "DELETE_EVENT", payload: { data: row } });
+        });
+      } else {
+        toast.error("Event not deleted");
+      }
+    });
+  };
+
+  const options = [
+    { value: "ename", label: "Event Name" },
+    { value: "hname", label: "Host Name" },
+    { value: "vipticket", label: "VIP Ticket" },
+    { value: "vvipticket", label: "VVIP Ticket" },
+    { value: "goldticket", label: "Gold Ticket" },
+  ];
 
   return (
     <Fragment>
@@ -35,7 +75,14 @@ const Index = () => {
             <Input
               type="text"
               placeholder="Search Event"
-              className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              onChange={handleChange}
+              className="mt-2 p-3 w-full h-12 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+            <Select
+              className="w-full mt-2 h-12"
+              value={options.find((option) => option.value === sort)}
+              onChange={(selectedOption) => setSort(selectedOption.value)}
+              options={options}
             />
             <Button
               type="submit"
@@ -49,7 +96,7 @@ const Index = () => {
           <div className="my-5">
             <Table
               columns={eventTable}
-              data={eventData || []}
+              data={data || []}
               editData={editEventData}
               deleteData={deleteEvent}
             />
@@ -84,10 +131,14 @@ const Index = () => {
         <Modal
           modalOpen={modalOpen}
           toggleModal={toggleModal}
-          title={(!editEvent?"Add Event":"Edit Event")}
+          title={!editEvent ? "Add Event" : "Edit Event"}
           type="submit"
         >
-          <AddEvent toggleModal={toggleModal} editEvent={editEvent} />
+          <AddEvent
+            toggleModal={toggleModal}
+            editEvent={editEvent}
+            setEditEvent={setEditEvent}
+          />
         </Modal>
       )}
     </Fragment>

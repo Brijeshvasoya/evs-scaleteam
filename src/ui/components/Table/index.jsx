@@ -1,7 +1,6 @@
 import React, { Fragment } from "react";
 import DataTable from "react-data-table-component";
 import { ChevronDown, Eye, Trash } from "react-feather";
-import PerfectScrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import _ from "lodash";
 import "./table.css";
@@ -37,7 +36,7 @@ const Table = ({ columns, data, editData, deleteData }) => {
     name: "Actions",
     selector: "actions",
     cell: (row) => (
-      <div className="flex space-x-8 justify-center">
+      <div className="flex space-x-3 justify-center">
         {editData ? (
           <button
             onClick={() => editData(row)}
@@ -60,7 +59,6 @@ const Table = ({ columns, data, editData, deleteData }) => {
   return (
     <Fragment>
       <div className="react-dataTable w-auto" id="data-table">
-        <PerfectScrollbar>
           <DataTable
             className="react-dataTable"
             columns={_.filter(
@@ -72,8 +70,9 @@ const Table = ({ columns, data, editData, deleteData }) => {
               data?.filter((item) => item !== undefined && item !== null) || []
             }
             customStyles={customStyles}
+            pagination
+            fixedHeader
           />
-        </PerfectScrollbar>
       </div>
     </Fragment>
   );

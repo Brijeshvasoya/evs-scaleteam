@@ -1,8 +1,8 @@
 import React, { Fragment } from "react";
-import { Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import { Modal, ModalBody, ModalFooter, ModalHeader, Badge } from "reactstrap";
 import { Button } from "reactstrap";
 import { X } from "react-feather";
-import "./model.css"
+import "./model.css";
 
 const index = (props) => {
   return (
@@ -13,16 +13,23 @@ const index = (props) => {
         className="modal-container"
       >
         <ModalHeader className="relative">
-            <h1 className="relative top-8 text-2xl font-semibold right-0 p-0">{props.title}</h1>
-          <Button
-            className="absolute top-8 right-0 p-0 cursor-pointer"
+          <h1 className="relative top-16 p-5 text-2xl font-semibold right-0">
+            {props.title}
+          </h1>
+          {/* <Button
+            className=""
             onClick={props.toggleModal}
-          >
-            <X />
-          </Button>
+          > */}
+            <Badge className="bg-white absolute top-17 right-0 p-0 cursor-pointer" onClick={props.toggleModal}>
+              <X />
+            </Badge>
+          {/* </Button> */}
         </ModalHeader>
 
-        <ModalBody className="bg-white p-8 rounded-lg shadow-lg w-full max-w-4xl">
+        <ModalBody
+          className="rounded-lg shadow-lg w-full max-w-4xl"
+          style={{ backgroundColor: "#f3f2f0" }}
+        >
           {props?.children}
         </ModalBody>
 

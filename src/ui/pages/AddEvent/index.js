@@ -4,8 +4,7 @@ import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
 import DatePicker from "../../components/DatePicker";
 import { toast } from "react-toastify";
-import { useDispatch,useSelector } from "react-redux";
-
+import { useDispatch, useSelector } from "react-redux";
 import {
   CardTitle,
   CardText,
@@ -16,31 +15,47 @@ import {
   FormText,
 } from "reactstrap";
 
-const Index = ({ toggleModal, editEvent }) => {
-    const dispatch = useDispatch();
+const Index = ({ toggleModal, editEvent,setEditEvent }) => {
+  const dispatch = useDispatch();
+  const { eventData } = useSelector((state) => state.user);
   const [edit, setEdit] = useState();
 
   const {
     control,
     handleSubmit,
     formState: { errors },
+    setValue, 
   } = useForm();
 
   useEffect(() => {
-    setEdit(editEvent);
-  }, [editEvent]);
-
-  console.log(edit, "edit");
+    if (editEvent) {
+      setEdit(editEvent);
+      setValue("ename", editEvent.ename);
+      setValue("hname", editEvent.hname);
+      setValue("eventdate", moment(editEvent.eventdate).toDate());
+      setValue("hno", editEvent.hno);
+      setValue("address", editEvent.address);
+      setValue("vipticket", editEvent.vipticket);
+      setValue("vvipticket", editEvent.vvipticket);
+      setValue("goldticket", editEvent.goldticket);
+    }
+  }, [editEvent, setValue]);
 
   const onSubmit = (data, e) => {
     e.preventDefault();
     data.eventdate = moment(data.eventdate).format("DD MMM YYYY");
-    if(!editEvent){
-    const addEvent = { ...data, id: uuidv4() };
-    dispatch({ type: "ADD_EVENT", payload: { data: addEvent } });
-    toast.success("Your Event Successfully Add", { autoClose: 1000 });
-    }else{
-      console.log(data,"edit event")
+
+    if (!editEvent) {
+      const addEvent = { ...data, id: uuidv4() };
+      dispatch({ type: "ADD_EVENT", payload: { data: addEvent } });
+      toast.success("Your Event Successfully Add", { autoClose: 1000 });
+    } else {
+      const updatedEvent={...data,id:edit?.id}
+      console.log(updatedEvent,"updated")
+      dispatch({ type: "EDIT_EVENT", payload: { data: updatedEvent } });
+      toast.success("Event Edit Successfully", { autoClose: 1000 });
+      setEdit(null);
+      setEditEvent(null);
     }
     toggleModal();
   };
@@ -48,281 +63,180 @@ const Index = ({ toggleModal, editEvent }) => {
   return (
     <Fragment>
       <div className="w-auto pt-10 flex items-center justify-center">
-        <div className="max-w-md w-full bg-slate-300 rounded-lg shadow-lg p-8">
+      <div className="max-w-md w-full rounded-lg shadow-lg p-8" style={{ backgroundColor: '#f3f2f0' }}>
           <Form onSubmit={handleSubmit(onSubmit)}>
             <div>
-              <Label
-                className="block text-sm font-medium text-gray-700"
-                for="ename"
-              >
+              <Label className="block text-sm font-medium text-gray-700" for="ename">
                 Event Name<span className="text-red-500">&#42;</span>
               </Label>
               <Controller
                 name="ename"
                 control={control}
-                defaultValue=""
-                rules={{
-                  required: "Event Name is required",
-                }}
+                rules={{ required: "Event Name is required" }}
                 render={({ field }) => (
                   <>
                     <Input
                       {...field}
                       type="text"
                       id="ename"
-                      value={edit?.ename || ""}
                       placeholder="Please Enter Event Name"
                       className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
-                    {errors.ename && (
-                      <FormText className="text-red-500">
-                        {errors.ename.message}
-                      </FormText>
-                    )}
+                    {errors.ename && <FormText className="text-red-500">{errors.ename.message}</FormText>}
                   </>
                 )}
               />
             </div>
             <div>
-              <Label
-                className="block text-sm font-medium text-gray-700"
-                for="hname"
-              >
+              <Label className="block text-sm font-medium text-gray-700" for="hname">
                 Host Name<span className="text-red-500">&#42;</span>
               </Label>
               <Controller
                 name="hname"
                 control={control}
-                defaultValue=""
-                rules={{
-                  required: "Host Name is required",
-                }}
+                rules={{ required: "Host Name is required" }}
                 render={({ field }) => (
                   <>
                     <Input
                       {...field}
                       type="text"
                       id="hname"
-                      value={edit?.hname || ""}
                       placeholder="Please Enter Host Name"
                       className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
-                    {errors.ename && (
-                      <FormText className="text-red-500">
-                        {errors.ename.message}
-                      </FormText>
-                    )}
+                    {errors.hname && <FormText className="text-red-500">{errors.hname.message}</FormText>}
                   </>
                 )}
               />
             </div>
             <div className="mb-1">
-              <Label
-                className="block text-sm font-medium mb-2 text-gray-700"
-                for="eventdate"
-              >
+              <Label className="block text-sm font-medium mb-2 text-gray-700" for="eventdate">
                 Event Date<span className="text-red-500">&#42;</span>
               </Label>
               <Controller
                 name="eventdate"
                 control={control}
-                rules={{
-                  required: "Event Date is required",
-                }}
-                render={({ field: { onChange, value } }) => {
-                  return (
-                    <DatePicker
-                      min={moment()._d}
-                      placeholder="Enter Date of Birth"
-                      invalid={errors?.dob && true}
-                      onChange={(e) => onChange(e[0])}
-                      className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      value={
-                        edit?.eventdate
-                          ? moment(edit?.eventdate).toDate()
-                          : value
-                      }
-                    />
-                  );
-                }}
+                rules={{ required: "Event Date is required" }}
+                render={({ field: { onChange, value } }) => (
+                  <DatePicker
+                    min={moment()._d}
+                    onChange={(e) => onChange(e[0])}
+                    className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    value={edit?.eventdate ? moment(edit?.eventdate).toDate() : value}
+                  />
+                )}
               />
-              {errors && errors?.eventdate && (
-                <FormText className="text-red-500">
-                  {errors.eventdate?.message}
-                </FormText>
-              )}
+              {errors?.eventdate && <FormText className="text-red-500">{errors.eventdate.message}</FormText>}
             </div>
+
             <div>
-              <Label
-                className="block text-sm font-medium text-gray-700"
-                for="hno"
-              >
-                House/Flat no/Office no/Floor no
-                <span className="text-red-500">&#42;</span>
+              <Label className="block text-sm font-medium text-gray-700" for="hno">
+                House/Flat no/Office no/Floor no<span className="text-red-500">&#42;</span>
               </Label>
               <Controller
                 name="hno"
                 control={control}
-                defaultValue=""
-                rules={{
-                  required: "Require House/Flat no/Office no/Floor no",
-                }}
+                rules={{ required: "Require House/Flat no/Office no/Floor no" }}
                 render={({ field }) => (
                   <>
                     <Input
                       {...field}
                       type="text"
                       id="hno"
-                      value={edit?.hno || ""}
                       placeholder="Please Enter House/Flat no/Office no/Floor no"
                       className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
-                    {errors.hno && (
-                      <FormText className="text-red-500">
-                        {errors.hno.message}
-                      </FormText>
-                    )}
+                    {errors.hno && <FormText className="text-red-500">{errors.hno.message}</FormText>}
                   </>
                 )}
               />
             </div>
+
             <div>
-              <Label
-                className="block text-sm font-medium text-gray-700"
-                for="address"
-              >
+              <Label className="block text-sm font-medium text-gray-700" for="address">
                 Address<span className="text-red-500">&#42;</span>
               </Label>
               <Controller
                 name="address"
                 control={control}
-                defaultValue=""
-                rules={{
-                  required: "Enter your address",
-                }}
+                rules={{ required: "Enter your address" }}
                 render={({ field }) => (
                   <>
                     <Input
                       {...field}
                       type="text"
                       id="address"
-                      value={edit?.address || ""}
                       placeholder="Please Enter Address"
                       className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
-                    {errors.address && (
-                      <FormText className="text-red-500">
-                        {errors.address.message}
-                      </FormText>
-                    )}
+                    {errors.address && <FormText className="text-red-500">{errors.address.message}</FormText>}
                   </>
                 )}
               />
             </div>
             <div className="flex justify-between">
-              <Label
-                className="block text-sm font-medium text-gray-700"
-                for="vipticket"
-              >
+            <Label className="block text-sm font-medium text-gray-700" for="vipticket">
                 VIP Ticket<span className="text-red-500">&#42;</span>
               </Label>
-              <Label
-                className="block text-sm font-medium text-gray-700"
-                for="vvipticket"
-              >
+              <Label className="block text-sm font-medium text-gray-700" for="vvipticket">
                 VVIP Ticket<span className="text-red-500">&#42;</span>
               </Label>
-              <Label
-                className="block text-sm font-medium text-gray-700"
-                for="goldticket"
-              >
-                Gold Ticket<span className="text-red-500">&#42;</span>
+              <Label className="block text-sm font-medium text-gray-700" for="goldticket">
+                GOLD Ticket<span className="text-red-500">&#42;</span>
               </Label>
             </div>
             <div className="flex justify-between">
               <Controller
                 name="vipticket"
                 control={control}
-                defaultValue=""
-                rules={{
-                  required: "Enter your vipticket",
-                }}
+                rules={{ required: "Enter your VIP ticket rate" }}
                 render={({ field }) => (
-                  <>
-                    <Input
-                      {...field}
-                      type="text"
-                      id="vipticket"
-                      value={edit?.vipticket || ""}
-                      placeholder="Rate"
-                      className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    />
-                    {errors.vipticket && (
-                      <FormText className="text-red-500">
-                        {errors.vipticket.message}
-                      </FormText>
-                    )}
-                  </>
+                  <Input
+                    {...field}
+                    type="text"
+                    id="vipticket"
+                    placeholder="VIP Ticket Rate"
+                    className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
                 )}
               />
               <Controller
                 name="vvipticket"
                 control={control}
-                defaultValue=""
-                rules={{
-                  required: "Enter your vvipticket",
-                }}
+                rules={{ required: "Enter your VVIP ticket rate" }}
                 render={({ field }) => (
-                  <>
-                    <Input
-                      {...field}
-                      type="text"
-                      id="vvipticket"
-                      value={edit?.vvipticket || ""}
-                      placeholder="Rate"
-                      className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    />
-                    {errors.vvipticket && (
-                      <FormText className="text-red-500">
-                        {errors.vvipticket.message}
-                      </FormText>
-                    )}
-                  </>
+                  <Input
+                    {...field}
+                    type="text"
+                    id="vvipticket"
+                    placeholder="VVIP Ticket Rate"
+                    className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
                 )}
               />
               <Controller
                 name="goldticket"
                 control={control}
-                defaultValue=""
-                rules={{
-                  required: "Enter your goldticket",
-                }}
+                rules={{ required: "Enter your Gold ticket rate" }}
                 render={({ field }) => (
-                  <>
-                    <Input
-                      {...field}
-                      type="text"
-                      id="goldticket"
-                      value={edit?.goldticket || ""}
-                      placeholder="Rate"
-                      className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    />
-                    {errors.goldticket && (
-                      <FormText className="text-red-500">
-                        {errors.goldticket.message}
-                      </FormText>
-                    )}
-                  </>
+                  <Input
+                    {...field}
+                    type="text"
+                    id="goldticket"
+                    placeholder="Gold Ticket Rate"
+                    className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
                 )}
               />
             </div>
+
             <Button
               type="submit"
               color="primary"
               block
-              className="w-full py-3 my-3 text-white font-medium rounded-lg bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full py-0 h-12 mt-8 text-white font-medium rounded-lg bg-slate-800 hover:bg-sl focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
-              {!edit?"Submit":"Edit"}
+              {!edit ? "Submit" : "Edit"}
             </Button>
           </Form>
         </div>

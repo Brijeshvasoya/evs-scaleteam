@@ -23,7 +23,7 @@ export const AddUserReducer = (state = initialUserState, action) => {
       localStorage.setItem("users", JSON.stringify(newState));
       return { ...state, userData: newState };
     case "DELETE_USER":
-      newState = state.userData.filter((item) => item.id !== action.payload.id);
+      newState = state.userData.filter((item) => item.id !== action.payload.data.id);
       localStorage.setItem("users", JSON.stringify(newState));
       return { ...state, userData: newState };
     case "LOGIN_USER":
@@ -37,6 +37,10 @@ export const AddUserReducer = (state = initialUserState, action) => {
       newState = state.eventData.map((item) =>
         item.id === action.payload.data.id ? action.payload.data : item
       );
+      localStorage.setItem("event_data", JSON.stringify(newState));
+      return { ...state, eventData: newState };
+    case "DELETE_EVENT":
+      newState = state.eventData.filter((item) => item.id !== action.payload.data.id);
       localStorage.setItem("event_data", JSON.stringify(newState));
       return { ...state, eventData: newState };
     default:
