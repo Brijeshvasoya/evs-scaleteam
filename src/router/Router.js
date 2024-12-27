@@ -6,16 +6,17 @@ import Navbar from "../ui/components/Navbar"
 import Sidebar from "../ui/components/Sidebar";
 
 const PublicRoute = (props) => {
+  debugger
   const { Component } = props;
   const navigate = useNavigate();
   const { activeUser } = useSelector((state) => state?.user);
 
+  const token = JSON.parse(localStorage.getItem("active_user"))?.isVerified;
   useEffect(() => {
-    const token = activeUser?.isVerified || JSON.parse(localStorage.getItem("active_user"))?.isVerified;
     if (token) {
       navigate("/dashboard");
     }
-  }, [activeUser, navigate]);
+  }, [token, navigate]);
 
   return <Component />;
 };
@@ -31,12 +32,12 @@ const ProtectRoute = (props) => {
   //   navigate('/')
   //  }
   // },[])
+  const token = JSON.parse(localStorage.getItem("active_user"))?.isVerified;
   useEffect(() => {
-    const token = activeUser?.isVerified || JSON.parse(localStorage.getItem("active_user"))?.isVerified;
     if (!token) {
       navigate("/");
     }
-  }, [activeUser, navigate]);
+  }, [token,navigate]);
 
   return (
     <div className="flex">
@@ -54,7 +55,6 @@ const ProtectRoute = (props) => {
 
 
 const Routers = memo(() => {
- 
   return (
     <BrowserRouter>
       <Routes>
