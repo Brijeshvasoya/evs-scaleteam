@@ -15,7 +15,7 @@ import {
   FormText,
 } from "reactstrap";
 
-const Index = ({ toggleModal, editEvent,setEditEvent }) => {
+const Index = ({ toggleModal, editEvent, setEditEvent }) => {
   const dispatch = useDispatch();
   const { eventData } = useSelector((state) => state.user);
   const [edit, setEdit] = useState();
@@ -24,7 +24,7 @@ const Index = ({ toggleModal, editEvent,setEditEvent }) => {
     control,
     handleSubmit,
     formState: { errors },
-    setValue, 
+    setValue,
   } = useForm();
 
   useEffect(() => {
@@ -50,8 +50,8 @@ const Index = ({ toggleModal, editEvent,setEditEvent }) => {
       dispatch({ type: "ADD_EVENT", payload: { data: addEvent } });
       toast.success("Your Event Successfully Add", { autoClose: 1000 });
     } else {
-      const updatedEvent={...data,id:edit?.id}
-      console.log(updatedEvent,"updated")
+      const updatedEvent = { ...data, id: edit?.id };
+      console.log(updatedEvent, "updated");
       dispatch({ type: "EDIT_EVENT", payload: { data: updatedEvent } });
       toast.success("Event Edit Successfully", { autoClose: 1000 });
       setEdit(null);
@@ -62,11 +62,17 @@ const Index = ({ toggleModal, editEvent,setEditEvent }) => {
 
   return (
     <Fragment>
-      <div className="w-auto pt-10 flex items-center justify-center">
-      <div className="max-w-md w-full rounded-lg shadow-lg p-8" style={{ backgroundColor: '#f3f2f0' }}>
+      <div className="w-auto flex items-center justify-center">
+        <div
+          className="max-w-md w-full rounded-lg shadow-lg p-8"
+          style={{ backgroundColor: "#f3f2f0" }}
+        >
           <Form onSubmit={handleSubmit(onSubmit)}>
-            <div>
-              <Label className="block text-sm font-medium text-gray-700" for="ename">
+            <div className="-mt-3 mb-2">
+              <Label
+                className="block text-sm font-medium text-gray-700"
+                for="ename"
+              >
                 Event Name<span className="text-red-500">&#42;</span>
               </Label>
               <Controller
@@ -82,13 +88,20 @@ const Index = ({ toggleModal, editEvent,setEditEvent }) => {
                       placeholder="Please Enter Event Name"
                       className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
-                    {errors.ename && <FormText className="text-red-500">{errors.ename.message}</FormText>}
+                    {errors.ename && (
+                      <FormText className="text-red-500">
+                        {errors.ename.message}
+                      </FormText>
+                    )}
                   </>
                 )}
               />
             </div>
-            <div>
-              <Label className="block text-sm font-medium text-gray-700" for="hname">
+            <div className="mb-2">
+              <Label
+                className="block text-sm font-medium text-gray-700"
+                for="hname"
+              >
                 Host Name<span className="text-red-500">&#42;</span>
               </Label>
               <Controller
@@ -104,13 +117,20 @@ const Index = ({ toggleModal, editEvent,setEditEvent }) => {
                       placeholder="Please Enter Host Name"
                       className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
-                    {errors.hname && <FormText className="text-red-500">{errors.hname.message}</FormText>}
+                    {errors.hname && (
+                      <FormText className="text-red-500">
+                        {errors.hname.message}
+                      </FormText>
+                    )}
                   </>
                 )}
               />
             </div>
-            <div className="mb-1">
-              <Label className="block text-sm font-medium mb-2 text-gray-700" for="eventdate">
+            <div className="mb-2">
+              <Label
+                className="block text-sm font-medium mb-2 text-gray-700"
+                for="eventdate"
+              >
                 Event Date<span className="text-red-500">&#42;</span>
               </Label>
               <Controller
@@ -121,17 +141,28 @@ const Index = ({ toggleModal, editEvent,setEditEvent }) => {
                   <DatePicker
                     min={moment()._d}
                     onChange={(e) => onChange(e[0])}
+                    placeholder="Enter Event Date"
                     className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    value={edit?.eventdate ? moment(edit?.eventdate).toDate() : value}
+                    value={
+                      edit?.eventdate ? moment(edit?.eventdate).toDate() : value
+                    }
                   />
                 )}
               />
-              {errors?.eventdate && <FormText className="text-red-500">{errors.eventdate.message}</FormText>}
+              {errors?.eventdate && (
+                <FormText className="text-red-500">
+                  {errors.eventdate.message}
+                </FormText>
+              )}
             </div>
 
-            <div>
-              <Label className="block text-sm font-medium text-gray-700" for="hno">
-                House/Flat no/Office no/Floor no<span className="text-red-500">&#42;</span>
+            <div className="mb-2">
+              <Label
+                className="block text-sm font-medium text-gray-700"
+                for="hno"
+              >
+                House/Flat no/Office no/Floor no
+                <span className="text-red-500">&#42;</span>
               </Label>
               <Controller
                 name="hno"
@@ -146,14 +177,21 @@ const Index = ({ toggleModal, editEvent,setEditEvent }) => {
                       placeholder="Please Enter House/Flat no/Office no/Floor no"
                       className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
-                    {errors.hno && <FormText className="text-red-500">{errors.hno.message}</FormText>}
+                    {errors.hno && (
+                      <FormText className="text-red-500">
+                        {errors.hno.message}
+                      </FormText>
+                    )}
                   </>
                 )}
               />
             </div>
 
-            <div>
-              <Label className="block text-sm font-medium text-gray-700" for="address">
+            <div className="mb-2">
+              <Label
+                className="block text-sm font-medium text-gray-700"
+                for="address"
+              >
                 Address<span className="text-red-500">&#42;</span>
               </Label>
               <Controller
@@ -169,23 +207,30 @@ const Index = ({ toggleModal, editEvent,setEditEvent }) => {
                       placeholder="Please Enter Address"
                       className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
-                    {errors.address && <FormText className="text-red-500">{errors.address.message}</FormText>}
+                    {errors.address && (
+                      <FormText className="text-red-500">
+                        {errors.address.message}
+                      </FormText>
+                    )}
                   </>
                 )}
               />
             </div>
-            <div className="flex justify-between">
-            <Label className="block text-sm font-medium text-gray-700" for="vipticket">
+            <div className="flex justify-between mb-2">
+              <Label
+                className="block text-sm font-medium text-gray-700"
+                for="vipticket"
+              >
                 VIP Ticket<span className="text-red-500">&#42;</span>
               </Label>
-              <Label className="block text-sm font-medium text-gray-700" for="vvipticket">
+              <Label
+                className="block text-sm font-medium text-gray-700"
+                for="vvipticket"
+              >
                 VVIP Ticket<span className="text-red-500">&#42;</span>
               </Label>
-              <Label className="block text-sm font-medium text-gray-700" for="goldticket">
-                GOLD Ticket<span className="text-red-500">&#42;</span>
-              </Label>
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between mb-2">
               <Controller
                 name="vipticket"
                 control={control}
@@ -210,10 +255,18 @@ const Index = ({ toggleModal, editEvent,setEditEvent }) => {
                     type="text"
                     id="vvipticket"
                     placeholder="VVIP Ticket Rate"
-                    className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="mt-2 p-3 mx-2 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 )}
               />
+            </div>
+            <div className="mb-2">
+              <Label
+                className="block text-sm font-medium text-gray-700"
+                for="goldticket"
+              >
+                GOLD Ticket<span className="text-red-500">&#42;</span>
+              </Label>
               <Controller
                 name="goldticket"
                 control={control}
@@ -234,7 +287,7 @@ const Index = ({ toggleModal, editEvent,setEditEvent }) => {
               type="submit"
               color="primary"
               block
-              className="w-full py-0 h-12 mt-8 text-white font-medium rounded-lg bg-slate-800 hover:bg-sl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full py-0 h-12 text-white font-medium rounded-lg bg-slate-800 hover:bg-sl focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               {!edit ? "Submit" : "Edit"}
             </Button>

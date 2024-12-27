@@ -45,19 +45,19 @@ const UserDropdown = (props) => {
           <Menu />
         </DropdownToggle>
         {dropdownOpen && (
-          <DropdownMenu className=" text-white bg-slate-600 rounded-lg shadow-lg mt-2 ">
-            <DropdownItem
+          <DropdownMenu className=" w-28 text-black text-center bg-[#f3f2f0] rounded-lg shadow-lg mt-2 ">
+            {/* <DropdownItem
               header
-              className="text-center my-3 text-lg font-semibold"
+              className="text-center my-3 font-semibold"
             >
               <span>
-                <User className="inline-block mr-2" />
+                <User className="mr-2" />
                 {user
                   ? `${user.fname} ${user.lname}`
                   : "Guest"}
               </span>
-            </DropdownItem>
-            <DropdownItem divider />
+            </DropdownItem> */}
+            <DropdownItem divider  />
             <DropdownItem
               onClick={() => navigate("/profile")}
               className="text-center my-2"
@@ -67,7 +67,7 @@ const UserDropdown = (props) => {
                 Profile
               </span>
             </DropdownItem>
-            <DropdownItem divider />
+            <DropdownItem divider className="border-t border-gray-300"/>
             <DropdownItem onClick={signOut} className="text-center my-2">
               <span className="flex items-center">
                 <Power size={14} className="mr-2" />

@@ -10,24 +10,24 @@ const index = (props) => {
       <Modal
         isOpen={props.modalOpen}
         toggle={props.toggleModal}
-        className="modal-container"
+        className="fixed rounded-lg shadow-lg inset-0 z-50 flex justify-center items-center"
       >
-        <ModalHeader className="relative">
-          <h1 className="relative top-16 p-5 text-2xl font-semibold right-0">
+        <ModalHeader className="relative "style={{ backgroundColor: "#f3f2f0" }}>
+          <h1 className="relative top-6 p-5 text-2xl font-semibold right-0">
             {props.title}
           </h1>
-          {/* <Button
-            className=""
+          <Button
+            className="bg-white absolute top-6  right-0 p-0 cursor-pointer"
             onClick={props.toggleModal}
-          > */}
-            <Badge className="bg-white absolute top-17 right-0 p-0 cursor-pointer" onClick={props.toggleModal}>
+          >
+            <Badge className="" onClick={props.toggleModal}>
               <X />
             </Badge>
-          {/* </Button> */}
+          </Button>
         </ModalHeader>
 
         <ModalBody
-          className="rounded-lg shadow-lg w-full max-w-4xl"
+          className=" w-full max-w-7xl"
           style={{ backgroundColor: "#f3f2f0" }}
         >
           {props?.children}
