@@ -12,7 +12,10 @@ const index = (props) => {
         toggle={props.toggleModal}
         className="fixed rounded-lg shadow-lg inset-0 z-50 flex justify-center items-center"
       >
-        <ModalHeader className="relative "style={{ backgroundColor: "#f3f2f0" }}>
+        <ModalHeader
+          className="relative "
+          style={{ backgroundColor: "#f3f2f0" }}
+        >
           <h1 className="relative top-6 p-5 text-2xl font-semibold right-0">
             {props.title}
           </h1>
@@ -32,33 +35,6 @@ const index = (props) => {
         >
           {props?.children}
         </ModalBody>
-
-        {/* <ModalFooter className="mt-4 flex justify-between space-x-4">
-          <Button
-            color="secondary"
-            onClick={props.toggleModal}
-            className="w-40 py-3 text-white font-medium rounded-lg bg-slate-800 hover:bg-slate-600"
-          >
-            Cancel
-          </Button>
-          {props.type === "submit" ? (
-            <Button
-              color="primary"
-              onClick={props.addEvent}
-              className="w-40 py-3 text-white font-medium rounded-lg bg-slate-800 hover:bg-slate-600"
-            >
-              Create Event
-            </Button>
-          ) : (
-            <Button
-              color="primary"
-              onClick={props.addEvent}
-              className="w-40 py-3 text-white font-medium rounded-lg bg-slate-800 hover:bg-slate-600"
-            >
-              Update Event
-            </Button>
-          )}
-        </ModalFooter> */}
       </Modal>
     </Fragment>
   );

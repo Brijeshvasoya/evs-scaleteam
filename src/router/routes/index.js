@@ -29,6 +29,10 @@ const routes = [
     path: '/user',
     element: lazy(() => import('../../ui/pages/User')),  
   },
+  {
+    path: '/participate/:id',
+    element: lazy(() => import('../../ui/pages/Participate')),  
+  },
 ];
 
 export {DefaultRoute, routes };

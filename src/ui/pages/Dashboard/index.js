@@ -9,6 +9,7 @@ import Select from "react-select";
 import moment from "moment";
 import { eventTable } from "../../components/Constant";
 import ConfirmationModal from "../../components/Alert";
+import CardModal from "../../components/Modal/CardModal";
 import Card from "../../components/Card";
 
 const Index = () => {
@@ -23,12 +24,6 @@ const Index = () => {
   const [view, setView] = useState(true);
   const [viewEvent, setViewEvent] = useState();
 
-  // useEffect(() => {
-  //   if (role !== "Admin") {
-  //     setData(null);
-  //   }
-  // }, []);
-
   useEffect(() => {
     if (role === "Admin") {
       setData(eventData);
@@ -39,9 +34,11 @@ const Index = () => {
     setModalOpen(!modalOpen);
     setEditEvent(null);
   };
-  const toggleViewModel=()=>{
-  setView(true);
-}
+
+  const toggleViewModel = () => {
+    setView(true);
+  };
+
   const editEventData = (row) => {
     setEditEvent(row);
     setModalOpen(!modalOpen);
@@ -50,7 +47,6 @@ const Index = () => {
 
   const viewEventData = (row) => {
     setViewEvent(row);
-    // setModalOpen(!modalOpen);
     setView(false);
   };
 
@@ -109,6 +105,7 @@ const Index = () => {
     { value: "vvipticket", label: "VVIP Ticket" },
     { value: "goldticket", label: "Gold Ticket" },
   ];
+
   const customStyles = {
     control: (base, state) => ({
       ...base,
@@ -125,6 +122,7 @@ const Index = () => {
       },
     }),
   };
+
   return (
     <Fragment>
       {role && role === "Admin" ? (
@@ -199,6 +197,7 @@ const Index = () => {
           </div>
         </>
       )}
+
       {modalOpen && (
         <Modal
           modalOpen={modalOpen}
@@ -214,10 +213,11 @@ const Index = () => {
           />
         </Modal>
       )}
+
       {!view && (
-        <Modal modalOpen={!view} toggleModal={toggleViewModel}>
-          <Card item={viewEvent} />
-        </Modal>
+        <CardModal modalOpen={!view} toggleModal={toggleViewModel}>
+          <Card item={viewEvent} toggleModal={toggleViewModel} />
+        </CardModal>
       )}
     </Fragment>
   );

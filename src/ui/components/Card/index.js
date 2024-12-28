@@ -1,39 +1,103 @@
-import React from "react";
-import { Card, CardBody, CardTitle, CardText } from "reactstrap";
+import React, { Fragment } from "react";
 import moment from "moment";
+import { Label, Button } from "reactstrap";
+import { useNavigate } from "react-router-dom";
 
 const CardComponent = ({ item }) => {
-  console.log(item, "item");
-
+  const navigate = useNavigate();
   return (
-    <div className="event-card flex-1 min-w-[280px] max-w-[350px] mb-6">
-      <Card className="shadow-sm rounded">
-        <CardBody>
-          <CardTitle tag="h5" className="font-bold">
-            {item.ename} - {item.hname}
-          </CardTitle>
-          <CardText>
-            <strong>Date:</strong>{" "}
-            {moment(item.eventdate, "DD MMM YYYY").format("MMMM Do YYYY")}
-          </CardText>
-          <CardText>
-            <strong>Hall Number:</strong> {item.hno}
-          </CardText>
-          <CardText>
-            <strong>Address:</strong> {item.address}
-          </CardText>
-          <CardText>
-            <strong>VIP Ticket:</strong> {item.vipticket}
-          </CardText>
-          <CardText>
-            <strong>VVIP Ticket:</strong> {item.vvipticket}
-          </CardText>
-          <CardText>
-            <strong>Gold Ticket:</strong> {item.goldticket}
-          </CardText>
-        </CardBody>
-      </Card>
-    </div>
+    <Fragment>
+      <div className="bg-[#f3f2f0] w-[550px] h-auto rounded-lg shadow-lg p-6 flex flex-col justify-between">
+        <div className="space-y-4">
+          <div className="flex items-center space-x-4 w-full">
+            <div className="w-1/2">
+              <Label className="block text-sm font-medium text-gray-700">
+                Event Name:
+              </Label>
+              <div className="mt-1 p-3 w-full bg-gray-100 rounded-lg border border-gray-300">
+                {item?.ename}
+              </div>
+            </div>
+
+            <div className="w-1/2">
+              <Label className="block text-sm font-medium text-gray-700">
+                Host Name:
+              </Label>
+              <div className="mt-1 p-3 w-full bg-gray-100 rounded-lg border border-gray-300">
+                {item?.hname}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <Label className="block text-sm font-medium text-gray-700">
+              Event Date:
+            </Label>
+            <div className="mt-1 p-3 w-full bg-gray-100 rounded-lg border border-gray-300">
+              {item?.eventdate
+                ? moment(item?.eventdate).format("MMMM Do YYYY")
+                : "N/A"}
+            </div>
+          </div>
+
+          <div>
+            <Label className="block text-sm font-medium text-gray-700">
+              House/Flat/Office No/Floor No:
+            </Label>
+            <div className="mt-1 p-3 w-full bg-gray-100 rounded-lg border border-gray-300">
+              {item?.hno}
+            </div>
+          </div>
+
+          <div>
+            <Label className="block text-sm font-medium text-gray-700">
+              Address:
+            </Label>
+            <div className="mt-1 p-3 w-full bg-gray-100 rounded-lg border border-gray-300">
+              {item?.address}
+            </div>
+          </div>
+
+          <div className="flex w-auto justify-between space-x-4">
+            <div className="w-1/3">
+              <Label className="block text-sm font-medium text-gray-700">
+                VIP Ticket:
+              </Label>
+              <div className="mt-1 p-3 w-full bg-gray-100 rounded-lg border border-gray-300">
+                {item?.vipticket}
+              </div>
+            </div>
+            <div className="w-1/3">
+              <Label className="block text-sm font-medium text-gray-700">
+                VVIP Ticket:
+              </Label>
+              <div className="mt-1 p-3 w-full bg-gray-100 rounded-lg border border-gray-300">
+                {item?.vvipticket}
+              </div>
+            </div>
+            <div className="w-1/3">
+              <Label className="block text-sm font-medium text-gray-700">
+                Gold Ticket:
+              </Label>
+              <div className="mt-1 p-3 w-full bg-gray-100 rounded-lg border border-gray-300">
+                {item?.goldticket}
+              </div>
+            </div>
+          </div>
+          <div className="flex space-x-3">
+            <Button
+              type="submit"
+              color="primary"
+              block
+              onClick={() => navigate(`/participate/${item?.id}`)}
+              className="w-full py-0 h-12 text-white font-medium rounded-lg bg-slate-800 hover:bg-sl focus:outline-none"
+            >
+              Participate
+            </Button>
+          </div>
+        </div>
+      </div>
+    </Fragment>
   );
 };
 
