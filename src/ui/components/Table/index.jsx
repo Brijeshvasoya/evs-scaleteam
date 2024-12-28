@@ -1,11 +1,11 @@
 import React, { Fragment } from "react";
 import DataTable from "react-data-table-component";
-import { ChevronDown, Eye, Trash } from "react-feather";
+import { ChevronDown, Eye, Trash,Edit } from "react-feather";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import _ from "lodash";
 import "./table.css";
 
-const Table = ({ columns, data, editData, deleteData }) => {
+const Table = ({ columns, data, editData, deleteData,viewData }) => {
   const customStyles = {
     rows: {
       style: {
@@ -42,7 +42,7 @@ const Table = ({ columns, data, editData, deleteData }) => {
             onClick={() => editData(row)}
             className="text-blue-500 hover:text-blue-700"
           >
-            <Eye size={16} />
+            <Edit size={16} />
           </button>
         ) : null}
         {deleteData ? (
@@ -51,6 +51,14 @@ const Table = ({ columns, data, editData, deleteData }) => {
             className="text-red-500 hover:text-red-700"
           >
             <Trash size={16} />
+          </button>
+        ) : null}
+        {viewData ? (
+          <button
+            onClick={() => viewData(row)}
+            className="text-blue-500 hover:text-blue-700"
+          >
+            <Eye size={16} />
           </button>
         ) : null}
       </div>

@@ -16,23 +16,20 @@ const UserDropdown = (props) => {
   const [, removeCookie] = useCookies();
   const dispatch = useDispatch();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [user, setUser] = useState([]);
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("active_user"));
-    setUser(user);
-  }, []);
-
+  let user = JSON.parse(localStorage.getItem("active_user"));
+  
   const signOut = () => {
+    navigate("/");
     const activeUser = JSON.parse(localStorage.getItem("active_user"));
     const newUser = { ...activeUser, isVerified: false };
     dispatch({ type: "EDIT_USER", payload: { data: newUser } });
     localStorage.removeItem("active_user");
     removeCookie("Remember");
-    navigate("/");
+    user=null
     toast.success("Logout Successfully", { autoClose: 1000 });
   };
 
-  const toggle = () => setDropdownOpen((prevState) => !prevState);
+  const toggle = () => setDropdownOpen(!dropdownOpen);
 
   return (
     <div>
@@ -41,7 +38,7 @@ const UserDropdown = (props) => {
           className="flex items-center space-x-2 px-4 py-2 text-white bg-gray-700 rounded-lg hover:bg-gray-600 transition-all"
           caret
         >
-          <span>{user.role}</span>
+          <span>{user?.role}</span>
           <Menu />
         </DropdownToggle>
         {dropdownOpen && (

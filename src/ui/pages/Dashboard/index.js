@@ -1,13 +1,15 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Button, Input } from "reactstrap";
 import Table from "../../components/Table";
 import { useSelector, useDispatch } from "react-redux";
 import Modal from "../../components/Modal";
 import AddEvent from "../AddEvent";
-import { eventTable } from "../../components/Constant";
-import ConfirmationModal from "../../components/Alert";
 import { toast } from "react-toastify";
 import Select from "react-select";
+import moment from "moment";
+import { eventTable } from "../../components/Constant";
+import ConfirmationModal from "../../components/Alert";
+import Card from "../../components/Card";
 
 const Index = () => {
   const dispatch = useDispatch();
@@ -18,16 +20,40 @@ const Index = () => {
   const [editEvent, setEditEvent] = useState();
   const [data, setData] = useState(eventData);
   const [sort, setSort] = useState();
+  const [view, setView] = useState(true);
+  const [viewEvent, setViewEvent] = useState();
+
+  // useEffect(() => {
+  //   if (role !== "Admin") {
+  //     setData(null);
+  //   }
+  // }, []);
+
+  useEffect(() => {
+    if (role === "Admin") {
+      setData(eventData);
+    }
+  }, [eventData]);
 
   const toggleModal = () => {
     setModalOpen(!modalOpen);
     setEditEvent(null);
   };
-
+  const toggleViewModel=()=>{
+  setView(true);
+}
   const editEventData = (row) => {
     setEditEvent(row);
     setModalOpen(!modalOpen);
+    setView(true);
   };
+
+  const viewEventData = (row) => {
+    setViewEvent(row);
+    // setModalOpen(!modalOpen);
+    setView(false);
+  };
+
   const handleChange = (e) => {
     const newData = eventData.filter((row) => {
       return row[sort].toLowerCase().includes(e.target.value.toLowerCase());
@@ -59,6 +85,23 @@ const Index = () => {
     });
   };
 
+  const allEvent = () => {
+    setData(eventData);
+  };
+
+  const participatedEvent = () => {
+    setData(null);
+  };
+
+  const upComingEvent = () => {
+    const filterEvent = eventData.filter((item) => {
+      const eventDate = moment(item?.eventdate, "DD MMM YYYY");
+      const today = moment();
+      return eventDate.isSameOrAfter(today, "day");
+    });
+    setData(filterEvent);
+  };
+
   const options = [
     { value: "ename", label: "Event Name" },
     { value: "hname", label: "Host Name" },
@@ -69,22 +112,22 @@ const Index = () => {
   const customStyles = {
     control: (base, state) => ({
       ...base,
-      boxShadow: state.isFocused ? '0 0 0 2px #6366f1' : 'none',
+      boxShadow: state.isFocused ? "0 0 0 2px #6366f1" : "none",
       minHeight: 48,
       height: 48,
     }),
-    option:(base,state)=>({
+    option: (base, state) => ({
       ...base,
-      cursor: 'pointer',
-      backgroundColor:state.isFocused?'#f3f2f0':"",
-    '&:hover': {
-      backgroundColor: '#f3f2f0', 
-    },
-    })
-  }
+      cursor: "pointer",
+      backgroundColor: state.isFocused ? "#f3f2f0" : "",
+      "&:hover": {
+        backgroundColor: "#f3f2f0",
+      },
+    }),
+  };
   return (
     <Fragment>
-      {role === "Admin" ? (
+      {role && role === "Admin" ? (
         <>
           <div className="flex justify-between mt-4 space-x-4">
             <Input
@@ -119,29 +162,42 @@ const Index = () => {
           </div>
         </>
       ) : (
-        <div className="flex justify-between mt-4 space-x-4">
-          <Button
-            type="submit"
-            color="primary"
-            className="w-full py-3 text-white font-medium rounded-lg bg-slate-800 hover:bg-slate-600 focus:outline-none focus:ring-2 focus:bg-gray-500"
-          >
-            Upcoming Events
-          </Button>
-          <Button
-            type="submit"
-            color="primary"
-            className="w-full py-3 text-white font-medium rounded-lg bg-slate-800 hover:bg-slate-600 focus:outline-none focus:ring-2 focus:bg-gray-500"
-          >
-            Participated Events
-          </Button>
-          <Button
-            type="submit"
-            color="primary"
-            className="w-full py-3 text-white font-medium rounded-lg bg-slate-800 hover:bg-slate-600 focus:outline-none focus:ring-2 focus:bg-gray-500"
-          >
-            All
-          </Button>
-        </div>
+        <>
+          <div className="flex justify-between mt-4 space-x-4">
+            <Button
+              type="submit"
+              color="primary"
+              active
+              className="w-full py-3 active:bg-gray-500 text-white font-medium rounded-lg bg-slate-800 hover:bg-slate-600 focus:outline-none focus:ring-0 focus:bg-gray-500"
+              onClick={allEvent}
+            >
+              All
+            </Button>
+            <Button
+              type="submit"
+              color="primary"
+              className="w-full py-3 text-white font-medium rounded-lg bg-slate-800 hover:bg-slate-600 focus:outline-none focus:ring-0 focus:bg-gray-500"
+              onClick={upComingEvent}
+            >
+              Upcoming Events
+            </Button>
+            <Button
+              type="submit"
+              color="primary"
+              className="w-full py-3 text-white font-medium rounded-lg bg-slate-800 hover:bg-slate-600 focus:outline-none focus:ring-0 focus:bg-gray-500"
+              onClick={participatedEvent}
+            >
+              Participated Events
+            </Button>
+          </div>
+          <div className="my-5">
+            <Table
+              columns={eventTable}
+              data={data || []}
+              viewData={viewEventData}
+            />
+          </div>
+        </>
       )}
       {modalOpen && (
         <Modal
@@ -154,7 +210,13 @@ const Index = () => {
             toggleModal={toggleModal}
             editEvent={editEvent}
             setEditEvent={setEditEvent}
+            view={view}
           />
+        </Modal>
+      )}
+      {!view && (
+        <Modal modalOpen={!view} toggleModal={toggleViewModel}>
+          <Card item={viewEvent} />
         </Modal>
       )}
     </Fragment>

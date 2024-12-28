@@ -15,9 +15,8 @@ import {
   FormText,
 } from "reactstrap";
 
-const Index = ({ toggleModal, editEvent, setEditEvent }) => {
+const Index = ({ toggleModal, editEvent, setEditEvent, view }) => {
   const dispatch = useDispatch();
-  const { eventData } = useSelector((state) => state.user);
   const [edit, setEdit] = useState();
 
   const {
@@ -42,20 +41,22 @@ const Index = ({ toggleModal, editEvent, setEditEvent }) => {
   }, [editEvent, setValue]);
 
   const onSubmit = (data, e) => {
-    e.preventDefault();
-    data.eventdate = moment(data.eventdate).format("DD MMM YYYY");
+    if (view) {
+      e.preventDefault();
+      data.eventdate = moment(data.eventdate).format("DD MMM YYYY");
 
-    if (!editEvent) {
-      const addEvent = { ...data, id: uuidv4() };
-      dispatch({ type: "ADD_EVENT", payload: { data: addEvent } });
-      toast.success("Your Event Successfully Add", { autoClose: 1000 });
-    } else {
-      const updatedEvent = { ...data, id: edit?.id };
-      console.log(updatedEvent, "updated");
-      dispatch({ type: "EDIT_EVENT", payload: { data: updatedEvent } });
-      toast.success("Event Edit Successfully", { autoClose: 1000 });
-      setEdit(null);
-      setEditEvent(null);
+      if (!editEvent) {
+        const addEvent = { ...data, id: uuidv4() };
+        dispatch({ type: "ADD_EVENT", payload: { data: addEvent } });
+        toast.success("Your Event Successfully Add", { autoClose: 1000 });
+      } else {
+        const updatedEvent = { ...data, id: edit?.id };
+        console.log(updatedEvent, "updated");
+        dispatch({ type: "EDIT_EVENT", payload: { data: updatedEvent } });
+        toast.success("Event Edit Successfully", { autoClose: 1000 });
+        setEdit(null);
+        setEditEvent(null);
+      }
     }
     toggleModal();
   };
@@ -85,6 +86,7 @@ const Index = ({ toggleModal, editEvent, setEditEvent }) => {
                       {...field}
                       type="text"
                       id="ename"
+                      disabled={!view}
                       placeholder="Please Enter Event Name"
                       className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
@@ -114,6 +116,7 @@ const Index = ({ toggleModal, editEvent, setEditEvent }) => {
                       {...field}
                       type="text"
                       id="hname"
+                      disabled={!view}
                       placeholder="Please Enter Host Name"
                       className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
@@ -139,7 +142,7 @@ const Index = ({ toggleModal, editEvent, setEditEvent }) => {
                 rules={{ required: "Event Date is required" }}
                 render={({ field: { onChange, value } }) => (
                   <DatePicker
-                    min={moment()._d}
+                    // min={moment()._d}
                     onChange={(e) => onChange(e[0])}
                     placeholder="Enter Event Date"
                     className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -174,6 +177,7 @@ const Index = ({ toggleModal, editEvent, setEditEvent }) => {
                       {...field}
                       type="text"
                       id="hno"
+                      disabled={!view}
                       placeholder="Please Enter House/Flat no/Office no/Floor no"
                       className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
@@ -204,6 +208,7 @@ const Index = ({ toggleModal, editEvent, setEditEvent }) => {
                       {...field}
                       type="text"
                       id="address"
+                      disabled={!view}
                       placeholder="Please Enter Address"
                       className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
@@ -239,6 +244,7 @@ const Index = ({ toggleModal, editEvent, setEditEvent }) => {
                   <Input
                     {...field}
                     type="text"
+                    disabled={!view}
                     id="vipticket"
                     placeholder="VIP Ticket Rate"
                     className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -254,6 +260,7 @@ const Index = ({ toggleModal, editEvent, setEditEvent }) => {
                     {...field}
                     type="text"
                     id="vvipticket"
+                    disabled={!view}
                     placeholder="VVIP Ticket Rate"
                     className="mt-2 p-3 mx-2 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
@@ -276,6 +283,7 @@ const Index = ({ toggleModal, editEvent, setEditEvent }) => {
                     {...field}
                     type="text"
                     id="goldticket"
+                    disabled={!view}
                     placeholder="Gold Ticket Rate"
                     className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
@@ -289,7 +297,7 @@ const Index = ({ toggleModal, editEvent, setEditEvent }) => {
               block
               className="w-full py-0 h-12 text-white font-medium rounded-lg bg-slate-800 hover:bg-sl focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
-              {!edit ? "Submit" : "Edit"}
+              {view ? (!edit ? "Submit" : "Edit") : "Close"}
             </Button>
           </Form>
         </div>
