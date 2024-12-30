@@ -7,6 +7,12 @@ import "./model.css";
 const index = (props) => {
   return (
     <Fragment>
+      <div
+        className={`fixed inset-0 bg-black bg-opacity-50 ${
+          props.modalOpen ? "backdrop-blur-sm" : "hidden"
+        }`}
+        style={{ zIndex: props.modalOpen ? 999 : -1 }}
+      ></div>
       <Modal
         isOpen={props.modalOpen}
         toggle={props.toggleModal}

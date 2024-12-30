@@ -7,8 +7,10 @@ const ConfirmationModal = (status,title,text,btntext,show) => {
         icon: status,
         showCancelButton: show,
         confirmButtonText: btntext,
+        confirmButtonColor:"#28a745",
         cancelButtonText: 'No, cancel!',
-        reverseButtons: true
+        cancelButtonColor:"#dc3545",
+        reverseButtons: false
       })
 }
 
