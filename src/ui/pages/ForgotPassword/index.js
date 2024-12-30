@@ -189,8 +189,8 @@ const ForgotPassword = () => {
               disabled={loading}
               className={`w-full py-2 px-4 font-semibold text-white rounded-lg transition-all ${
                 loading
-                  ? "bg-blue-400 cursor-not-allowed"
-                  : "bg-blue-600 hover:bg-blue-700"
+                  ? "bg-slate-400  cursor-not-allowed"
+                  : "bg-slate-800  hover:bg-slate-600 "
               }`}
             >
               {loading ? "Sending..." : "ReSet Password"}

@@ -4,6 +4,7 @@ const initialUserState = {
   userData: JSON.parse(localStorage.getItem("users")) || [],
   activeUser: JSON.parse(localStorage.getItem("active_user")) || [],
   eventData: JSON.parse(localStorage.getItem("event_data")) || [],
+  participate: JSON.parse(localStorage.getItem("participate")) || [],
 };
 
 export const AddUserContext = createContext();
@@ -23,7 +24,9 @@ export const AddUserReducer = (state = initialUserState, action) => {
       localStorage.setItem("users", JSON.stringify(newState));
       return { ...state, userData: newState };
     case "DELETE_USER":
-      newState = state.userData.filter((item) => item.id !== action.payload.data.id);
+      newState = state.userData.filter(
+        (item) => item.id !== action.payload.data.id
+      );
       localStorage.setItem("users", JSON.stringify(newState));
       return { ...state, userData: newState };
     case "LOGIN_USER":
@@ -40,9 +43,28 @@ export const AddUserReducer = (state = initialUserState, action) => {
       localStorage.setItem("event_data", JSON.stringify(newState));
       return { ...state, eventData: newState };
     case "DELETE_EVENT":
-      newState = state.eventData.filter((item) => item.id !== action.payload.data.id);
+      newState = state.eventData.filter(
+        (item) => item.id !== action.payload.data.id
+      );
       localStorage.setItem("event_data", JSON.stringify(newState));
       return { ...state, eventData: newState };
+    case "ADD_PARTICIPATE":
+      const userIndex = state?.participate?.findIndex(
+        (item) => item?.id === action?.payload?.data?.id
+      );
+      let updatedParticipation;
+
+      if (userIndex !== -1) {
+        updatedParticipation = [...state.participate];
+        updatedParticipation[userIndex] = action.payload.data;
+      } else {
+        updatedParticipation = [...state.participate, action.payload.data];
+      }
+
+      localStorage.setItem("participate", JSON.stringify(updatedParticipation));
+
+      return { ...state, participate: updatedParticipation };
+
     default:
       return state;
   }

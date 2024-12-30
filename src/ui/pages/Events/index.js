@@ -12,7 +12,7 @@ const Index = () => {
   });
 
   return (
-      <div className="flex  py-8  flex-wrap justify-evenly gap-8 px-8">
+      <div className="flex  py-8  flex-wrap justify-start gap-8 px-8">
         {filterEvent.length ? (
           filterEvent.map((item, index) => (
             <CardComponent item={item} key={index} />

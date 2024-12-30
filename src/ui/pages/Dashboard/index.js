@@ -7,7 +7,7 @@ import AddEvent from "../AddEvent";
 import { toast } from "react-toastify";
 import Select from "react-select";
 import moment from "moment";
-import { eventTable } from "../../components/Constant";
+import { eventTable,participateEventTable } from "../../components/Constant";
 import ConfirmationModal from "../../components/Alert";
 import CardModal from "../../components/Modal/CardModal";
 import Card from "../../components/Card";
@@ -16,6 +16,7 @@ const Index = () => {
   const dispatch = useDispatch();
   const { eventData } = useSelector((state) => state.user);
   const { activeUser } = useSelector((state) => state.user);
+  const { participate } = useSelector((state) => state.user);
   const role = activeUser?.role || "";
   const [modalOpen, setModalOpen] = useState(false);
   const [editEvent, setEditEvent] = useState();
@@ -23,6 +24,7 @@ const Index = () => {
   const [sort, setSort] = useState();
   const [view, setView] = useState(true);
   const [viewEvent, setViewEvent] = useState();
+  const [option,setOption]=useState(eventTable);
 
   useEffect(() => {
     if (role === "Admin") {
@@ -83,10 +85,14 @@ const Index = () => {
 
   const allEvent = () => {
     setData(eventData);
+    setOption(eventTable);
+
   };
 
   const participatedEvent = () => {
-    setData(null);
+    const event=participate.find((item)=>item?.id===activeUser?.id)
+    setData(event?.event);
+    setOption(participateEventTable);
   };
 
   const upComingEvent = () => {
@@ -96,6 +102,7 @@ const Index = () => {
       return eventDate.isSameOrAfter(today, "day");
     });
     setData(filterEvent);
+    setOption(eventTable);
   };
 
   const options = [
@@ -152,7 +159,7 @@ const Index = () => {
           </div>
           <div className="my-5">
             <Table
-              columns={eventTable}
+              columns={option}
               data={data || []}
               editData={editEventData}
               deleteData={deleteEvent}
@@ -190,7 +197,7 @@ const Index = () => {
           </div>
           <div className="my-5">
             <Table
-              columns={eventTable}
+              columns={option}
               data={data || []}
               viewData={viewEventData}
             />

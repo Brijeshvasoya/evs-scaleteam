@@ -1,96 +1,76 @@
 import React, { Fragment } from "react";
 import moment from "moment";
-import { Label, Button } from "reactstrap";
+import { Button } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 
 const CardComponent = ({ item }) => {
   const navigate = useNavigate();
   return (
     <Fragment>
-      <div className="bg-[#f3f2f0] w-[550px] h-auto rounded-lg shadow-lg p-6 flex flex-col justify-between">
-        <div className="space-y-4">
-          <div className="flex items-center space-x-4 w-full">
+      <div className="bg-[#f3f2f0] w-[550px] h-auto rounded-lg shadow-lg p-6 flex flex-col">
+        <div className="space-y-6">
+          <div className="text-xl font-bold text-center text-gray-800">Event Details</div>
+          <div className="flex items-center space-x-4">
             <div className="w-1/2">
-              <Label className="block text-sm font-medium text-gray-700">
-                Event Name:
-              </Label>
-              <div className="mt-1 p-3 w-full bg-gray-100 rounded-lg border border-gray-300">
-                {item?.ename}
+              <div className="text-sm text-gray-700">
+                <span>{item?.ename}</span>
               </div>
             </div>
-
             <div className="w-1/2">
-              <Label className="block text-sm font-medium text-gray-700">
-                Host Name:
-              </Label>
-              <div className="mt-1 p-3 w-full bg-gray-100 rounded-lg border border-gray-300">
-                {item?.hname}
+              <div className="text-sm text-gray-700">
+                <span>{item?.hname}</span>
               </div>
             </div>
           </div>
-
           <div>
-            <Label className="block text-sm font-medium text-gray-700">
-              Event Date:
-            </Label>
-            <div className="mt-1 p-3 w-full bg-gray-100 rounded-lg border border-gray-300">
-              {item?.eventdate
-                ? moment(item?.eventdate).format("MMMM Do YYYY")
-                : "N/A"}
+            <div className="text-sm text-gray-700">
+              <span>
+                {item?.eventdate
+                  ? moment(item?.eventdate).format("MMMM Do YYYY")
+                  : "N/A"}
+              </span>
             </div>
           </div>
-
           <div>
-            <Label className="block text-sm font-medium text-gray-700">
-              House/Flat/Office No/Floor No:
-            </Label>
-            <div className="mt-1 p-3 w-full bg-gray-100 rounded-lg border border-gray-300">
-              {item?.hno}
+            <div className="text-sm text-gray-700">
+              <span>{item?.hno}</span>
             </div>
           </div>
-
           <div>
-            <Label className="block text-sm font-medium text-gray-700">
-              Address:
-            </Label>
-            <div className="mt-1 p-3 w-full bg-gray-100 rounded-lg border border-gray-300">
-              {item?.address}
+            <div className="text-sm text-gray-700">
+              <span>{item?.address}</span>
             </div>
           </div>
-
+          <div className="text-xl font-bold  text-center text-gray-800 mt-6">
+            Price Details
+          </div>
           <div className="flex w-auto justify-between space-x-4">
             <div className="w-1/3">
-              <Label className="block text-sm font-medium text-gray-700">
-                VIP Ticket:
-              </Label>
-              <div className="mt-1 p-3 w-full bg-gray-100 rounded-lg border border-gray-300">
-                {item?.vipticket}
+              <div className="text-sm text-gray-700">
+                <span className="font-bold">VIP Ticket: </span>
+                <span>{item?.vipticket}</span>
               </div>
             </div>
             <div className="w-1/3">
-              <Label className="block text-sm font-medium text-gray-700">
-                VVIP Ticket:
-              </Label>
-              <div className="mt-1 p-3 w-full bg-gray-100 rounded-lg border border-gray-300">
-                {item?.vvipticket}
+              <div className="text-sm text-gray-700">
+                <span className="font-bold">VVIP Ticket: </span>
+                <span>{item?.vvipticket}</span>
               </div>
             </div>
             <div className="w-1/3">
-              <Label className="block text-sm font-medium text-gray-700">
-                Gold Ticket:
-              </Label>
-              <div className="mt-1 p-3 w-full bg-gray-100 rounded-lg border border-gray-300">
-                {item?.goldticket}
+              <div className="text-sm text-gray-700">
+                <span className="font-bold">Gold Ticket: </span>
+                <span>{item?.goldticket}</span>
               </div>
             </div>
           </div>
-          <div className="flex space-x-3">
+          <div className="flex justify-end space-x-3 mt-4">
             <Button
-              type="submit"
+              type="button"
               color="primary"
               block
               onClick={() => navigate(`/participate/${item?.id}`)}
-              className="w-full py-0 h-12 text-white font-medium rounded-lg bg-slate-800 hover:bg-sl focus:outline-none"
+              className="w-32 py-0 h-12 text-white font-medium rounded-lg bg-slate-800 hover:bg-slate-700 focus:outline-none"
             >
               Participate
             </Button>

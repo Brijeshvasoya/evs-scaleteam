@@ -314,7 +314,7 @@ const Index = () => {
               type="submit"
               color="primary"
               block
-              className="w-full py-3 text-white font-medium rounded-lg bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full py-3 text-white font-medium rounded-lg bg-slate-800  hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               Register
             </Button>

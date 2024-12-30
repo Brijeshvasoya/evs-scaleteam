@@ -57,6 +57,65 @@ export const eventTable = [
     },
   ];
 
+  export const participateEventTable = [
+    {
+      selector: (row) => row?.ename, 
+      name: "Event Name",
+      sortField: "ename",
+      sortable: true,
+      minWidth: "auto",
+    },
+    {
+      selector: (row) => row?.hname, 
+      name: "Host Name",
+      sortField: "hname",
+      sortable: true,
+      minWidth: "auto",
+    },
+    {
+      selector: (row) => row?.eventdate, 
+      name: "Event Date",
+      sortField: "eventdate",
+      sortable: true,
+      minWidth: "auto",
+    },
+    {
+      selector: (row) => row?.hno, 
+      name: "Address 1",
+      sortField: "hno",
+      sortable: true,
+      minWidth: "auto",
+    },
+    {
+      selector: (row) => row?.address, 
+      name: "Address 2",
+      sortField: "address",
+      sortable: true,
+      minWidth: "auto",
+    },
+    {
+      selector: (row) => row?.tickettype, 
+      name: "Ticket Type",
+      sortField: "tickettype",
+      sortable: true,
+      minWidth: "auto",
+    },
+    {
+      selector: (row) => row?.ticketQuantity, 
+      name: "Total Ticket",
+      sortField: "ticketQuantity",
+      sortable: true,
+      minWidth: "auto",
+    },
+    {
+      selector: (row) => row?.totalamount, 
+      name: "Total Amount",
+      sortField: "totalamount",
+      sortable: true,
+      minWidth: "auto",
+    },
+  ];
+
   export const userTable=[
     {
         selector:(row)=>row?.fname,
