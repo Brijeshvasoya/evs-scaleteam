@@ -71,7 +71,6 @@ const Index = () => {
     setView(true);
   };
 
-  console.log(data, sort);
   const customStyles = {
     control: (base, state) => ({
       ...base,
@@ -93,16 +92,17 @@ const Index = () => {
       <div className="flex justify-between mt-4 space-x-4">
         <Input
           type="text"
-          placeholder="Search Event"
+          placeholder="Search By Event Name"
           onChange={handleChange}
           className=" p-3 w-full h-12 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
         />
         <Select
-          className="w-64 h-12 focus:ring-2 focus:ring-indigo-500"
+          className="w-80 h-12 focus:ring-2 focus:ring-indigo-500"
           styles={customStyles}
           value={options?.find((option) => option?.value === sort)}
           onChange={handleSelectChange}
           options={options}
+          placeholder="Search By User Name"
         />
       </div>
       <div className="my-5">

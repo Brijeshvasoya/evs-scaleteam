@@ -54,7 +54,11 @@ const Index = () => {
             setCookie("Remember", JSON.stringify(data?.email));
           }
           toast.success("Login Successfully", { autoClose: 1000 });
-          navigate("/dashboard");
+          if(matchedUser?.role==="Admin"){
+            navigate("/admin-dashboard");
+          }else{
+            navigate("/dashbord")
+          }
         }
       }
     } else {

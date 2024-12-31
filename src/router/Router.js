@@ -23,11 +23,13 @@ const ProtectRoute = (props) => {
   const { Component } = props;
   const navigate = useNavigate();
   const { activeUser } = useSelector((state) => state?.user);
-
+  const role=activeUser?.role
   const token = JSON.parse(localStorage.getItem("active_user"))?.isVerified;
   useEffect(() => {
     if (!token) {
       navigate("/");
+    }else if(role==="Admin"){
+      navigate(-1);
     }
   }, [token,navigate]);
 

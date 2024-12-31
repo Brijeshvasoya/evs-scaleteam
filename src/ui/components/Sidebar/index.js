@@ -10,6 +10,14 @@ const Index = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const handleNavigate=()=>{
+    if(role==="Admin"){
+      navigate("/admin-dashboard")
+    }else{
+      navigate("/dashboard")
+    }
+  }
+
   return (
     <div className="flex">
       <div className="w-64 h-screen bg-slate-800 text-white shadow-md fixed top-0 left-0">
@@ -18,13 +26,13 @@ const Index = () => {
             src={source}
             alt="logo img"
             className="w-32 cursor-pointer"
-            onClick={() => navigate("/dashboard")}
+            onClick={handleNavigate}
           />
         </div>
         <ul className="space-y-4 py-8">
           <li>
             <Link
-              to="/dashboard"
+              to={role!=="Admin"?"/dashboard":"/admin-dashboard"}
               className={`block px-6 py-2 text-lg text-white rounded transition-all focus:ring-2 ${
                 location.pathname === "/dashboard"
                   ? "bg-gray-500"
