@@ -46,6 +46,33 @@ const ProtectRoute = (props) => {
   );
 };
 
+const AdminRoute = (props) => {
+  const { Component } = props;
+  const navigate = useNavigate();
+  const { activeUser } = useSelector((state) => state?.user);
+  const role=activeUser?.role
+  const token = JSON.parse(localStorage.getItem("active_user"))?.isVerified;
+  useEffect(() => {
+    if (role!=="Admin") {
+      navigate(-1); 
+    }
+  }, [token,navigate]);
+
+  return (
+    <div className="flex">
+      <Sidebar />
+      <div className="ml-64 w-full">
+        <Navbar user={activeUser} />
+        <div className="p-8">
+        <Suspense fallback={null}>
+          <Component />
+          </Suspense>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 
 
 const Routers = memo(() => {
@@ -61,7 +88,15 @@ const Routers = memo(() => {
                 element={<PublicRoute Component={d.element} />}
               />
             );
-          } else {
+          } else if(d.layout==="admin") {
+            return (
+              <Route
+                key={key}
+                path={d.path}
+                element={<AdminRoute Component={d.element} />}
+              />
+            );
+          }else {
             return (
               <Route
                 key={key}

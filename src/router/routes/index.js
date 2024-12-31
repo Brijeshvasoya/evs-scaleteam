@@ -27,7 +27,8 @@ const routes = [
   },
   {
     path: '/user',
-    element: lazy(() => import('../../ui/pages/User')),  
+    element: lazy(() => import('../../ui/pages/User')),
+    layout:'admin'  
   },
   {
     path: '/participate/:id',
@@ -35,7 +36,8 @@ const routes = [
   },
   {
     path: '/userevent',
-    element: lazy(() => import('../../ui/pages/UserEvent')),  
+    element: lazy(() => import('../../ui/pages/UserEvent')),
+    layout:'admin'  
   },
 ];
 
