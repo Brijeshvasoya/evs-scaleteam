@@ -24,7 +24,7 @@ const Index = () => {
         value: user.fname,
         label: `${user.fname} ${user.lname}`,
       }));
-      setOptions(eventOption);
+      setOptions([{ value: "All", label: "All" }, ...eventOption]);
     }
   }, [userData]);
 
@@ -56,13 +56,16 @@ const Index = () => {
     setData(newData);
   };
   const handleSelectChange = (e) => {
-    console.log(e.value);
-    setSort(e?.target?.value);
-    const newData = sortData?.filter((row) => {
-      return row["fname"]?.toLowerCase().includes(e?.value?.toLowerCase());
-    });
-    setData(newData);
-  };
+    if (e.value === "All") {
+      setData(sortData);
+    } else {
+      const newData = sortData?.filter((row) => {
+        return row["fname"]?.toLowerCase().includes(e?.value?.toLowerCase());
+      });
+      setData(newData);
+    }
+    setSort(e?.value);
+  };;
   const toggleModal =()=>{
     setView(false);
   }
