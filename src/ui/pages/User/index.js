@@ -15,7 +15,7 @@ const Index = () => {
 
   const handleChange=(e)=>{
     const newData=newUser.filter(row=>{
-      return row.fname.toLowerCase().includes(e.target.value.toLowerCase())
+      return row.fname?.toLowerCase().includes(e.target.value?.toLowerCase())
     })
     setData(newData);
   }

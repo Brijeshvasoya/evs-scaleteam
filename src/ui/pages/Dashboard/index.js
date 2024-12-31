@@ -7,10 +7,11 @@ import AddEvent from "../AddEvent";
 import { toast } from "react-toastify";
 import Select from "react-select";
 import moment from "moment";
-import { eventTable,participateEventTable } from "../../components/Constant";
+import { eventTable, participateEventTable } from "../../components/Constant";
 import ConfirmationModal from "../../components/Alert";
 import CardModal from "../../components/Modal/CardModal";
 import Card from "../../components/Card";
+import Ticket from "../../components/Ticket";
 
 const Index = () => {
   const dispatch = useDispatch();
@@ -21,10 +22,12 @@ const Index = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [editEvent, setEditEvent] = useState();
   const [data, setData] = useState(eventData);
-  const [sort, setSort] = useState();
+  const [sort, setSort] = useState("ename");
   const [view, setView] = useState(true);
   const [viewEvent, setViewEvent] = useState();
-  const [option,setOption]=useState(eventTable);
+  const [option, setOption] = useState(eventTable);
+  const [ticket, setTicket] = useState(false);
+  const [showTicket,setShowTicket]=useState(false);
 
   useEffect(() => {
     if (role === "Admin") {
@@ -39,6 +42,13 @@ const Index = () => {
 
   const toggleViewModel = () => {
     setView(true);
+    setTicket(false);
+    setShowTicket(false);
+  };
+
+  const toggleTicketModel = () => {
+    setView(true);
+    setTicket(false);
   };
 
   const editEventData = (row) => {
@@ -50,11 +60,18 @@ const Index = () => {
   const viewEventData = (row) => {
     setViewEvent(row);
     setView(false);
+    setTicket(false);
+  };
+
+  const viewTicketData = (row) => {
+    setViewEvent(row);
+    setTicket(true);
+    setView(true);
   };
 
   const handleChange = (e) => {
     const newData = eventData.filter((row) => {
-      return row[sort].toLowerCase().includes(e.target.value.toLowerCase());
+      return row[sort]?.toLowerCase().includes(e.target.value?.toLowerCase());
     });
     setData(newData);
   };
@@ -86,13 +103,14 @@ const Index = () => {
   const allEvent = () => {
     setData(eventData);
     setOption(eventTable);
-
+    setShowTicket(false);
   };
 
   const participatedEvent = () => {
-    const event=participate.find((item)=>item?.id===activeUser?.id)
+    const event = participate.find((item) => item?.id === activeUser?.id);
     setData(event?.event);
     setOption(participateEventTable);
+    setShowTicket(true);
   };
 
   const upComingEvent = () => {
@@ -103,6 +121,7 @@ const Index = () => {
     });
     setData(filterEvent);
     setOption(eventTable);
+    setShowTicket(false);
   };
 
   const options = [
@@ -199,7 +218,7 @@ const Index = () => {
             <Table
               columns={option}
               data={data || []}
-              viewData={viewEventData}
+              viewData={showTicket ? viewTicketData : viewEventData}
             />
           </div>
         </>
@@ -221,9 +240,15 @@ const Index = () => {
         </Modal>
       )}
 
-      {!view && (
+      {!view && !ticket && (
         <CardModal modalOpen={!view} toggleModal={toggleViewModel}>
           <Card item={viewEvent} toggleModal={toggleViewModel} />
+        </CardModal>
+      )}
+
+      {ticket&& (
+        <CardModal modalOpen={ticket} toggleModal={toggleTicketModel}>
+          <Ticket item={viewEvent} toggleModal={toggleTicketModel} />
         </CardModal>
       )}
     </Fragment>
