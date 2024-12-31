@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Home, Calendar } from "react-feather";
+import { Home, Calendar,Tv } from "react-feather";
 import { useLocation } from "react-router-dom";
 
 const Index = () => {
@@ -50,19 +50,34 @@ const Index = () => {
               </Link>
             </li>
           ) : (
-            <li>
-              <Link
-                to="/user"
-                className={`block px-6 py-2 text-lg text-white rounded transition-all focus:ring-2 ${
-                  location.pathname === "/user"
-                    ? "bg-gray-500"
-                    : "hover:bg-gray-700"
-                }`}
-              >
-                <Calendar className="mr-3 inline" />
-                User
-              </Link>
-            </li>
+            <>
+              <li>
+                <Link
+                  to="/user"
+                  className={`block px-6 py-2 text-lg text-white rounded transition-all focus:ring-2 ${
+                    location.pathname === "/user"
+                      ? "bg-gray-500"
+                      : "hover:bg-gray-700"
+                  }`}
+                >
+                  <Calendar className="mr-3 inline" />
+                  User
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/userevent"
+                  className={`block px-6 py-2 text-lg text-white rounded transition-all focus:ring-2 ${
+                    location.pathname === "/userevent"
+                      ? "bg-gray-500"
+                      : "hover:bg-gray-700"
+                  }`}
+                >
+                  <Tv className="mr-3 inline" />
+                  UserEvent
+                </Link>
+              </li>
+            </>
           )}
         </ul>
       </div>

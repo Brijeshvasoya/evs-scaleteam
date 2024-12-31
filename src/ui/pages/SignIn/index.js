@@ -35,29 +35,35 @@ const Index = () => {
 
   const onSubmit = (data, e) => {
     e.preventDefault();
+  
     if (userData && userData.length > 0) {
-      if (rememberMe) {
-        setCookie("Remember", JSON.stringify(data?.email));
-      }
       const matchedUser = userData.find(
-        (item) =>
-          item?.email === data?.email && item?.password === data?.password
+        (item) => item?.email === data?.email
       );
-      if (matchedUser) {
-        const newUser = { ...matchedUser, isVerified: true };
-        dispatch({ type: "EDIT_USER", payload: { data: newUser } });
-        dispatch({ type: "LOGIN_USER", payload: { data: newUser } });
-        localStorage.setItem("active_user", JSON.stringify(newUser));
-        toast.success("Login Successfully", { autoClose: 1000 });
-        navigate("/dashboard");
+      if (!matchedUser) {
+        toast.error("Invalid email", { autoClose: 2000 });
       } else {
-        toast.error("Invalid email or password", { autoClose: 2000 });
+        if (matchedUser?.password !== data?.password) {
+          toast.error("Invalid password", { autoClose: 2000 });
+        } else {
+          const newUser = { ...matchedUser, isVerified: true };
+          dispatch({ type: "EDIT_USER", payload: { data: newUser } });
+          dispatch({ type: "LOGIN_USER", payload: { data: newUser } });
+          localStorage.setItem("active_user", JSON.stringify(newUser));
+          if (rememberMe) {
+            setCookie("Remember", JSON.stringify(data?.email));
+          }
+          toast.success("Login Successfully", { autoClose: 1000 });
+          navigate("/dashboard");
+        }
       }
     } else {
       toast.error("There are some errors in Login", { autoClose: 2000 });
     }
+  
     reset();
   };
+  
 
   return (
     <div className="flex h-screen container">
