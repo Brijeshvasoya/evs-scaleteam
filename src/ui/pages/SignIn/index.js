@@ -77,7 +77,7 @@ const Index = () => {
           className="w-32 cursor-pointer "
           onClick={() => navigate("/")}
         />
-        <img src={cover} alt="cover img" className="w-auto mt-4 h-4/5  mx-4" />
+        <img src={cover} alt="cover img" className="w-full mt-4 h-4/5 mx-4" />
       </div>
 
       <div className="w-1/2 flex items-center justify-center">
