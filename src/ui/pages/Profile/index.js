@@ -5,9 +5,10 @@ import { Label, Button, Input, FormGroup, FormText } from "reactstrap";
 import { useForm, Controller } from "react-hook-form";
 import { Camera, Trash2 } from "react-feather";
 import { toast } from "react-toastify";
+import { useCookies } from "react-cookie";
+import ConfirmationModal from '../../components/Alert';
 import DatePicker from "../../components/DatePicker";
 import dummyImg from "../../../assets/images/avatars/avatar-blank.png";
-import { useCookies } from "react-cookie";
 
 const Index = () => {
   const {
@@ -57,26 +58,29 @@ const Index = () => {
   };
 
   const onSubmit = (data) => {
+    let newDetail
     if (base64Url) {
-      const newDetail = {
+       newDetail = {
         ...data,
         id: activeUser?.id,
         profilePicture: base64Url,
         isVerified: true,
         role: activeUser?.role,
+        isDeleted:false
       };
-      dispatch({ type: "EDIT_USER", payload: { data: newDetail } });
-      dispatch({ type: "LOGIN_USER", payload: { data: newDetail } });
+    //   dispatch({ type: "EDIT_USER", payload: { data: newDetail } });
+    //   dispatch({ type: "LOGIN_USER", payload: { data: newDetail } });
     } else {
-      const newDetail = {
+       newDetail = {
         ...data,
         id: activeUser?.id,
         isVerified: true,
         role: activeUser?.role,
+        isDeleted:false
       };
-      dispatch({ type: "EDIT_USER", payload: { data: newDetail } });
-      dispatch({ type: "LOGIN_USER", payload: { data: newDetail } });
     }
+    dispatch({ type: "EDIT_USER", payload: { data: newDetail } });
+    dispatch({ type: "LOGIN_USER", payload: { data: newDetail } });
     if (activeUser?.role === "Admin") {
       navigate("/admin-dashboard");
     } else {
@@ -95,12 +99,32 @@ const Index = () => {
     navigate(-1);
   };
   const handleDeleteAccount = () => {
-    const newDetail = { ...activeUser, isDeleted: true };
-    dispatch({ type: "EDIT_USER", payload: { data: newDetail } });
-    localStorage.removeItem("active_user");
-    removeCookie("Remember");
-    toast.error("Your Profile is Deleted", { autoClose: 2000 });
-    navigate("/")
+    ConfirmationModal(
+      "warning",
+      "Are you sure?",
+      "You won't be able to revert this!",
+      "Yes, delete it!",
+      true
+    ).then((result) => {
+      if (result.isConfirmed) {
+        ConfirmationModal(
+          "success",
+          "Deleted!",
+          "Employee has been deleted.",
+          "ok",
+          false
+        ).then(() => {
+          const newDetail = { ...activeUser, isDeleted: true };
+          dispatch({ type: "EDIT_USER", payload: { data: newDetail } });
+          localStorage.removeItem("active_user");
+          removeCookie("Remember");
+          toast.error("Your Profile is Deleted", { autoClose: 2000 });
+          navigate("/");
+        });
+      } else {
+        toast.error("Your Profile is not deleted");
+      }
+    });
   };
   return (
     <div className="w-full max-w-4xl mx-auto">
@@ -131,14 +155,13 @@ const Index = () => {
               >
                 <Trash2 className="text-red-600" />
               </Label>
-            )  }
-              <Label
-                htmlFor="upload-image"
-                className="cursor-pointer relative left-20 -top-4 text-slate-800"
-              >
-                <Camera />
-              </Label>
-           
+            )}
+            <Label
+              htmlFor="upload-image"
+              className="cursor-pointer relative left-20 -top-4 text-slate-800"
+            >
+              <Camera />
+            </Label>
           </div>
           <div className="ml-4">
             <h2 className="text-2xl font-semibold">

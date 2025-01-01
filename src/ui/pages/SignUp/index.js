@@ -38,32 +38,30 @@ const Index = () => {
 
   const onSubmit = (data, e) => {
     e.preventDefault();
-    data.password=data.password.trim();
-    data.cpassword=data.cpassword.trim();
-    data.email=data.email.toLowerCase();
-    if (userData && userData.length > 0) {
-      const matchedUser = userData.find((item) => item?.email === data?.email);
-      if (matchedUser) {
-        toast.error("Email is Already Register");
+    data.email = data.email.toLowerCase();
+    data.password = data.password.trim();
+
+    const matchedUser = userData.find((item) => item?.email === data?.email);
+    if (matchedUser) {
+      toast.error("Email is Already Register");
+    } else {
+      if (data) {
+        delete data["cpassword"];
+        data.dob = moment(data.dob).format("DD MMM YYYY");
+        const user = JSON.parse(localStorage.getItem("users")) || [];
+        const role = user?.length === 0 ? "Admin" : "User";
+        const addUser = {
+          ...data,
+          id: uuidv4(),
+          role: role,
+          isVerified: false,
+          isDeleted: false,
+        };
+        dispatch({ type: "ADD_USER", payload: { data: addUser } });
+        toast.success("You are Register Successfully", { autoClose: 1000 });
+        navigate("/");
       } else {
-        if (data) {
-          delete data["cpassword"];
-          data.dob = moment(data.dob).format("DD MMM YYYY");
-          const user = JSON.parse(localStorage.getItem("users")) || [];
-          const role = user?.length === 0 ? "Admin" : "User";
-          const addUser = {
-            ...data,
-            id: uuidv4(),
-            role: role,
-            isVerified: false,
-            isDeleted: false,
-          };
-          dispatch({ type: "ADD_USER", payload: { data: addUser } });
-          toast.success("You are Register Successfully", { autoClose: 1000 });
-          navigate("/");
-        } else {
-          toast.error("There are Some error in Rgister", { autoClose: 2000 });
-        }
+        toast.error("There are Some error in Rgister", { autoClose: 2000 });
       }
     }
     reset();

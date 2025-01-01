@@ -42,19 +42,26 @@ const Index = () => {
     toggleModal();
   }
 
-  const deleteEvent = (event) => {
+  const deleteEvent = (row) => {
     ConfirmationModal(
-      'warning',
-      'Are you sure?',
-      'You won\'t be able to revert this!',
-      'Yes, delete it!',
+      "warning",
+      "Are you sure?",
+      "You won't be able to revert this!",
+      "Yes, delete it!",
       true
     ).then((result) => {
       if (result.isConfirmed) {
-        dispatch({ type: 'DELETE_EVENT', payload: event });
-        toast.success('Event deleted successfully');
+        ConfirmationModal(
+          "success",
+          "Deleted!",
+          "Employee has been deleted.",
+          "ok",
+          false
+        ).then(() => {
+          dispatch({ type: "DELETE_EVENT", payload: { data: row } });
+        });
       } else {
-        toast.error('Event not deleted');
+        toast.error("Event not deleted");
       }
     });
   };
