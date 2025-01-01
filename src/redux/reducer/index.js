@@ -31,6 +31,7 @@ export const AddUserReducer = (state = initialUserState, action) => {
       return { ...state, userData: newState };
     case "LOGIN_USER":
       newState = action.payload.data;
+      localStorage.setItem("active_user", JSON.stringify(newState));
       return { ...state, activeUser: newState };
     case "ADD_EVENT":
       newState = [...state.eventData, action.payload.data];

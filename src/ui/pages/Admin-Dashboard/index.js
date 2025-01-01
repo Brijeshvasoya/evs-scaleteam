@@ -24,7 +24,6 @@ const Index = () => {
 
   const toggleModal = () => {
     setModalOpen(!modalOpen);
-    setEditEvent(null);
   };
 
   const handleSortChange = (selectedOption) => {
@@ -37,6 +36,11 @@ const Index = () => {
     );
     setData(filteredData);
   };
+
+  const editData =(event)=>{
+    setEditEvent(event);
+    toggleModal();
+  }
 
   const deleteEvent = (event) => {
     ConfirmationModal(
@@ -109,10 +113,11 @@ const Index = () => {
         <Table
           columns={eventTable}
           data={data}
-          editData={(event) => {
-            setEditEvent(event);
-            toggleModal();
-          }}
+          // editData={(event) => {
+          //   setEditEvent(event);
+          //   toggleModal();
+          // }}
+          editData={editData}
           deleteData={deleteEvent}
         />
       </div>

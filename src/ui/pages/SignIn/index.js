@@ -38,7 +38,7 @@ const Index = () => {
   
     if (userData && userData.length > 0) {
       const matchedUser = userData.find(
-        (item) => item?.email === data?.email
+        (item) => item?.email === data?.email && item.isDeleted===false
       );
       if (!matchedUser) {
         toast.error("Invalid email", { autoClose: 2000 });
@@ -49,7 +49,6 @@ const Index = () => {
           const newUser = { ...matchedUser, isVerified: true };
           dispatch({ type: "EDIT_USER", payload: { data: newUser } });
           dispatch({ type: "LOGIN_USER", payload: { data: newUser } });
-          localStorage.setItem("active_user", JSON.stringify(newUser));
           if (rememberMe) {
             setCookie("Remember", JSON.stringify(data?.email));
           }

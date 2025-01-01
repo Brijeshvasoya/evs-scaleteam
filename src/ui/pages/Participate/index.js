@@ -86,7 +86,7 @@ const Index = () => {
       toast.info(`Selected Event is Complete at ${moment(eventDate).format("Do MMM YYYY")} `);
     }
 
-    navigate("/dashboard");
+    navigate(-1);
   };
 
   const ticketOptions = [

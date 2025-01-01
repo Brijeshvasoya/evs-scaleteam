@@ -18,9 +18,11 @@ const UserDropdown = (props) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   let user = JSON.parse(localStorage.getItem("active_user"));
   
+  const activeUser = JSON.parse(localStorage.getItem("active_user"));
+  const role=activeUser?.role;
+    
   const signOut = () => {
     navigate("/");
-    const activeUser = JSON.parse(localStorage.getItem("active_user"));
     const newUser = { ...activeUser, isVerified: false };
     dispatch({ type: "EDIT_USER", payload: { data: newUser } });
     localStorage.removeItem("active_user");
@@ -56,7 +58,7 @@ const UserDropdown = (props) => {
             </DropdownItem> */}
             <DropdownItem divider  />
             <DropdownItem
-              onClick={() => navigate("/profile")}
+              onClick={() =>(role!=="Admin")? navigate("/profile"):navigate("/admin-profile")}
               className="text-center my-2"
             >
               <span className="flex items-center">

@@ -30,6 +30,15 @@ const routes = [
     element: lazy(() => import('../../ui/pages/Participate')),  
   },
   {
+    path: '/profile',
+    element: lazy(() => import('../../ui/pages/Profile')),  
+  },
+  {
+    path: '/admin-profile',
+    element: lazy(() => import('../../ui/pages/Profile')),  
+    layout:'admin'
+  },
+  {
     path: '/user',
     element: lazy(() => import('../../ui/pages/User')),
     layout:'admin'  
