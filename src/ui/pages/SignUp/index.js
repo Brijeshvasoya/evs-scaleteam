@@ -38,7 +38,8 @@ const Index = () => {
 
   const onSubmit = (data, e) => {
     e.preventDefault();
-    
+    data.password=data.password.trim();
+    data.cpassword=data.cpassword.trim();
     data.email=data.email.toLowerCase();
     if (userData && userData.length > 0) {
       const matchedUser = userData.find((item) => item?.email === data?.email);
