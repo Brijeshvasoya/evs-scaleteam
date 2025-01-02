@@ -36,7 +36,9 @@ const Index = () => {
           "ok",
           false
         ).then(() => {
-          dispatch({ type: "DELETE_USER", payload: { data: row } });
+          const deleteUser={...row,isDeleted:true}
+          console.log(deleteUser)
+          dispatch({ type: "EDIT_USER", payload: { data: deleteUser } });
         });
       } else {
         toast.error("User not deleted");
