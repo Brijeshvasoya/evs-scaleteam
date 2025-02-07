@@ -1,19 +1,19 @@
 import React, { memo, useEffect, Suspense } from "react";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { routes } from "./routes";
-import { useSelector } from "react-redux";
 import Navbar from "../ui/components/Navbar";
 import Sidebar from "../ui/components/Sidebar";
+import Spinner from "../ui/components/Spinner";
 
 const PublicRoute = (props) => {
   const { Component } = props;
   const navigate = useNavigate();
-  const { activeUser } = useSelector((state) => state?.user);
+  const activeUser = JSON.parse(localStorage.getItem("active_user"));
   const role = activeUser?.role;
-  const token = JSON.parse(localStorage.getItem("active_user"))?.isVerified;
+  const token = localStorage.getItem("token")
   useEffect(() => {
     if (token) {
-      if (role !== "Admin") {
+      if (role !== "admin") {
         navigate("/dashboard");
       } else {
         navigate("/admin-dashboard");
@@ -27,13 +27,14 @@ const PublicRoute = (props) => {
 const ProtectRoute = (props) => {
   const { Component } = props;
   const navigate = useNavigate();
-  const { activeUser } = useSelector((state) => state?.user);
+  const activeUser = JSON.parse(localStorage.getItem("active_user"));
   const role = activeUser?.role;
-  const token = JSON.parse(localStorage.getItem("active_user"))?.isVerified;
+  const token = localStorage.getItem("token")
+
   useEffect(() => {
     if (!token) {
       navigate("/");
-    } else if (role === "Admin") {
+    } else if (role === "admin") {
       navigate(-1);
     }
   }, [token, navigate, role]);
@@ -44,7 +45,7 @@ const ProtectRoute = (props) => {
       <div className="ml-64 w-full">
         <Navbar user={activeUser} />
         <div className="p-8">
-          <Suspense fallback={null}>
+          <Suspense fallback={<Spinner />}>
             <Component />
           </Suspense>
         </div>
@@ -56,11 +57,12 @@ const ProtectRoute = (props) => {
 const AdminRoute = (props) => {
   const { Component } = props;
   const navigate = useNavigate();
-  const { activeUser } = useSelector((state) => state?.user);
-  const role = activeUser?.role;
-  const token = JSON.parse(localStorage.getItem("active_user"))?.isVerified;
+  const activeUser = JSON.parse(localStorage.getItem("active_user"));
+  const role = activeUser?.role; 
+  const token = localStorage.getItem("token")
+
   useEffect(() => {
-    if (role !== "Admin") {
+    if (role !== "admin") {
       navigate(-1);
     }
   }, [token, navigate, role]);
@@ -71,7 +73,7 @@ const AdminRoute = (props) => {
       <div className="ml-64 w-full">
         <Navbar user={activeUser} />
         <div className="p-8">
-          <Suspense fallback={null}>
+          <Suspense fallback={<Spinner />}>
             <Component />
           </Suspense>
         </div>

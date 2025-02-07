@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useCookies } from "react-cookie";
+import { useMutation } from "@apollo/client";
+import { SIGN_IN } from "./mutation";
 import InputPasswordToggle from "../../components/input-password-toggle";
+import Spinner from "../../components/Spinner";
 
 import {
   CardTitle,
@@ -17,11 +20,11 @@ import {
 import { useForm, Controller } from "react-hook-form";
 
 const Index = () => {
+  const cover = require(`../../../assets/images/pages/login-v2.avif`);
+  const source = require(`../../../logo.png`);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { userData } = useSelector((state) => state?.user);
-  const source = require(`../../../logo.png`);
-  const cover = require(`../../../assets/images/pages/login-v2.avif`);
+  const [signIn, { loading }] = useMutation(SIGN_IN);
 
   const {
     handleSubmit,
@@ -30,45 +33,52 @@ const Index = () => {
     formState: { errors },
   } = useForm();
   const [rememberMe, setRememberMe] = useState(false);
-  const [cookies, setCookie, removeCookie] = useCookies(["Remember"]);
+  const [, setCookie] = useCookies(["Remember"]);
 
   const onSubmit = (data, e) => {
     e.preventDefault();
-  
-    if (userData && userData.length > 0) {
-      const matchedUser = userData.find(
-        (item) => item?.email === data?.email && item.isDeleted===false
-      );
-      if (!matchedUser) {
-        toast.error("Invalid email", { autoClose: 2000 });
-      } else {
-        if (matchedUser?.password !== data?.password) {
-          toast.error("Invalid password", { autoClose: 2000 });
-        } else {
-          const newUser = { ...matchedUser, isVerified: true };
-          dispatch({ type: "EDIT_USER", payload: { data: newUser } });
-          dispatch({ type: "LOGIN_USER", payload: { data: newUser } });
+    if (data?.email && data?.password) {
+      signIn({
+        variables: {
+          userData: { email: data?.email.trim(), password: data?.password },
+        },
+      })
+        .then(async ({ data }) => {
+          console.log(data);
           if (rememberMe) {
-            setCookie("Remember", JSON.stringify(data?.email));
+            setCookie("remember", JSON.stringify(data?.email));
           }
-          toast.success("Login Successfully", { autoClose: 1000 });
-          if(matchedUser?.role==="Admin"){
-            navigate("/admin-dashboard");
-          }else{
-            navigate("/dashbord")
+          if (data?.signInUser?.token) {
+            localStorage.setItem(
+              "token",
+              JSON.stringify(data?.signInUser?.token)
+            );
+            dispatch({
+              type: "LOGIN_USER",
+              payload: { data: data?.signInUser?.user },
+            });
+            toast.success("Login Successfully", { autoClose: 1000 });
+            if (data?.signInUser?.user?.role === "admin") {
+              navigate("/admin-dashboard");
+            } else {
+              navigate("/dashboard");
+            }
           }
-        }
-      }
-    } else {
-      toast.error("There are some errors in Login", { autoClose: 2000 });
+        })
+        .catch((err) => {
+          toast.error(err?.message, { autoClose: 2000 });
+        });
     }
-  
     reset();
   };
-  
 
   return (
     <div className="flex h-screen container">
+      {loading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <Spinner size={75} color="#ffffff" />
+        </div>
+      )}
       <div className="w-1/2 flex flex-col justify-start items-start p-8">
         <img
           src={source}

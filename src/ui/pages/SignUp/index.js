@@ -1,12 +1,13 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import moment from "moment";
-import { v4 as uuidv4 } from "uuid";
 import { toast } from "react-toastify";
-
+import { useMutation } from "@apollo/client";
+import { SIGN_UP } from "./mutation";
 import InputPasswordToggle from "../../components/input-password-toggle";
 import DatePicker from "../../components/DatePicker";
-import { useDispatch, useSelector } from "react-redux";
+import Spinner from "../../components/Spinner";
+// import { useDispatch, useSelector } from "react-redux";
 
 import {
   CardTitle,
@@ -21,8 +22,10 @@ import { useForm, Controller } from "react-hook-form";
 
 const Index = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { userData } = useSelector((state) => state.user);
+  // const dispatch = useDispatch();
+  // const { userData } = useSelector((state) => state.user);
+const [signUp, { loading }] = useMutation(SIGN_UP);
+
   const source = require(`../../../logo.png`);
   const cover = require(`../../../assets/images/pages/sign-up.avif`);
 
@@ -38,37 +41,40 @@ const Index = () => {
 
   const onSubmit = (data, e) => {
     e.preventDefault();
-    data.email = data.email.toLowerCase();
+    console.log(typeof(data.age))
+    data.email = data.email.toLowerCase().trim();
     data.password = data.password.trim();
 
-    const matchedUser = userData.find((item) => item?.email === data?.email);
-    if (matchedUser) {
-      toast.error("Email is Already Register");
-    } else {
-      if (data) {
-        delete data["cpassword"];
-        data.dob = moment(data.dob).format("DD MMM YYYY");
-        const user = JSON.parse(localStorage.getItem("users")) || [];
-        const role = user?.length === 0 ? "Admin" : "User";
-        const addUser = {
-          ...data,
-          id: uuidv4(),
-          role: role,
-          isVerified: false,
-          isDeleted: false,
-        };
-        dispatch({ type: "ADD_USER", payload: { data: addUser } });
-        toast.success("You are Register Successfully", { autoClose: 1000 });
-        navigate("/");
-      } else {
-        toast.error("There are Some error in Rgister", { autoClose: 2000 });
-      }
+    if(data){
+      const input = {
+        fname: data.fname,
+        lname: data.lname,
+        email: data.email,
+        password: data.password,
+        dob: data.dob,
+        age: parseInt(data.age),
+      };
+      signUp({ variables: { userNew: input } }).then(async({ data }) => {
+        if (data?.createUser) {
+          toast.success("You are Register Successfully", { autoClose: 1000 });
+          navigate("/");
+        } else {
+          toast.error("There are Some error in Rgister", { autoClose: 2000 });
+        }
+      }).catch((error) => {
+        toast.error(error?.message, { autoClose: 2000 });
+      });
     }
     reset();
   };
 
   return (
     <div className="flex container">
+      {loading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <Spinner size={75} color="#ffffff" />
+        </div>
+      )}
       <div className="w-1/2 flex flex-col justify-start items-start p-8">
         <img
           src={source}

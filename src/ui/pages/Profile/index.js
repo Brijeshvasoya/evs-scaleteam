@@ -80,7 +80,7 @@ const Index = () => {
     }
     dispatch({ type: "EDIT_USER", payload: { data: newDetail } });
     dispatch({ type: "LOGIN_USER", payload: { data: newDetail } });
-    if (activeUser?.role === "Admin") {
+    if (activeUser?.role === "admin") {
       navigate("/admin-dashboard");
     } else {
       navigate("/dashboard");

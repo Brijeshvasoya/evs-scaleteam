@@ -8,12 +8,16 @@ import { Link, useNavigate } from "react-router-dom";
 import { ChevronLeft } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { useMutation } from "@apollo/client";
+import { FORGOT_PASSWORD } from "./mutation";
+import Spinner from "../../components/Spinner";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { userData } = useSelector((state) => state?.user);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
+  const [forgotPassword,{loading}] = useMutation(FORGOT_PASSWORD);
 
   const {
     control,
@@ -29,26 +33,32 @@ const ForgotPassword = () => {
 
   const onSubmit = (data,e) => {
     e.preventDefault()
-    setLoading(true);
-    const userExists = userData?.find((user) => user.email === data.email);
-    if (userExists) {
-      const updatedUsers = userData.map((user) =>
-        user.email === data.email ? { ...user, password: data.password } : user
-      );
-      dispatch({ type: "EDIT_USER", payload: { data: updatedUsers } });
-      localStorage.setItem("users", JSON.stringify(updatedUsers));
-      toast.success("Password reset successfully!", { autoClose: 1000 });
-      navigate("/")
-      setLoading(false);
-    } else {
-      setLoading(false);
-      toast.error("Email not found. Please try again.",{autoClose:2000});
+    if(data?.email&&data?.password){
+      forgotPassword({
+        variables: {
+          userData: { email: data?.email.trim(),password:data?.password },
+        },
+      })
+      .then(({ data }) => {
+        if (data?.forgotPassword) {
+          toast.success("Password reset email sent", { autoClose: 1000 });
+          navigate("/");
+        } else {
+          toast.error("Email not found. Please try again.",{autoClose:2000});
+        }
+      })
+      .catch((error) => {
+        toast.error(error?.message, { autoClose: 2000 });
+      });
+    }else{
+      toast.error("Please fill all the fields", { autoClose: 2000 });
     }
     reset();
   };
 
   return (
     <div className="flex h-screen container">
+      {loading && <Spinner />}
       <div className="w-1/2 flex flex-col justify-start items-start p-8">
         <img
           src={logo}

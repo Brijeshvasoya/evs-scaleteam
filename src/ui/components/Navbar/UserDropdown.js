@@ -26,6 +26,7 @@ const UserDropdown = (props) => {
     const newUser = { ...activeUser, isVerified: false };
     dispatch({ type: "EDIT_USER", payload: { data: newUser } });
     localStorage.removeItem("active_user");
+    localStorage.clear();
     removeCookie("Remember");
     user=null
     toast.success("Logout Successfully", { autoClose: 1000 });
@@ -45,20 +46,9 @@ const UserDropdown = (props) => {
         </DropdownToggle>
         {dropdownOpen && (
           <DropdownMenu className=" w-28 text-black text-center bg-[#f3f2f0] rounded-lg shadow-lg mt-2 ">
-            {/* <DropdownItem
-              header
-              className="text-center my-3 font-semibold"
-            >
-              <span>
-                <User className="mr-2" />
-                {user
-                  ? `${user.fname} ${user.lname}`
-                  : "Guest"}
-              </span>
-            </DropdownItem> */}
             <DropdownItem divider  />
             <DropdownItem
-              onClick={() =>(role!=="Admin")? navigate("/profile"):navigate("/admin-profile")}
+              onClick={() =>(role!=="admin")? navigate("/profile"):navigate("/admin-profile")}
               className="text-center my-2"
             >
               <span className="flex items-center">

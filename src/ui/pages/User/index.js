@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 const Index = () => {
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("users"));
-  const newUser = user.filter((item) => item.role !== "Admin");
+  const newUser = user.filter((item) => item.role !== "admin");
   const [data, setData] = useState(newUser);
 
   const handleChange = (e) => {

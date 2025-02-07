@@ -18,7 +18,7 @@ const Index = () => {
   const [view,setView]=useState(false);
 
   useEffect(() => {
-    const user = userData?.filter((row) => row?.role !== "Admin");
+    const user = userData?.filter((row) => row?.role !== "admin");
     if (user) {
       const eventOption = user.map((user) => ({
         value: user.fname,

@@ -11,7 +11,7 @@ const Index = () => {
   const location = useLocation();
 
   const handleNavigate=()=>{
-    if(role==="Admin"){
+    if(role==="admin"){
       navigate("/admin-dashboard")
     }else{
       navigate("/dashboard")
@@ -32,7 +32,7 @@ const Index = () => {
         <ul className="space-y-4 py-8">
           <li>
             <Link
-              to={role!=="Admin"?"/dashboard":"/admin-dashboard"}
+              to={role!=="admin"?"/dashboard":"/admin-dashboard"}
               className={`block px-6 py-2 text-lg text-white rounded transition-all focus:ring-2 ${
                 location.pathname === "/dashboard"
                   ? "bg-gray-500"
@@ -43,7 +43,7 @@ const Index = () => {
               Dashboard
             </Link>
           </li>
-          {role !== "Admin" ? (
+          {role !== "admin" ? (
             <li>
               <Link
                 to="/events"

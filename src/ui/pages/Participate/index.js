@@ -6,9 +6,13 @@ import moment from "moment";
 import Select from "react-select";
 import { Label, Button } from "reactstrap";
 import { toast } from "react-toastify";
+import { useQuery } from "@apollo/client";
+import {GET_EVENT} from "./query.js"
 
 const Index = () => {
   const { id } = useParams();
+  const { data, loading, error } = useQuery(GET_EVENT, { variables: { id } });
+  console.log(data);
   const { activeUser } = useSelector((state) => state.user);
   const { eventData } = useSelector((state) => state.user);
   const { participate } = useSelector((state) => state.user);
@@ -20,11 +24,10 @@ const Index = () => {
   const [ticketQuantity, setTicketQuantity] = useState(null);
 
   useEffect(() => {
-    if (eventData) {
-      const event = eventData.find((item) => item.id === id);
-      setFetchData(event);
+    if (data) {
+      setFetchData(data.event);
     }
-  }, [id, eventData]);
+  }, [id, data]);
 
   const onParticipate = () => {
     if (!ticketType || !ticketQuantity) {
@@ -89,9 +92,9 @@ const Index = () => {
   };
 
   const ticketOptions = [
-    { value: fetchData?.vipticket, label: "VIP Ticket" },
-    { value: fetchData?.vvipticket, label: "VVIP Ticket" },
-    { value: fetchData?.goldticket, label: "Gold Ticket" },
+    { value: fetchData?.ticket?.vipticket, label: "VIP Ticket" },
+    { value: fetchData?.ticket?.vvipticket, label: "VVIP Ticket" },
+    { value: fetchData?.ticket?.goldticket, label: "Gold Ticket" },
   ];
 
   const quantityOptions = [
@@ -187,10 +190,10 @@ const Index = () => {
               value={ticketOptions.find(
                 (option) => option.value === ticketType
               )}
-              onChange={(selectedOption) => (
-                setOptions(selectedOption.label),
-                setTicketType(selectedOption.value)
-              )}
+              onChange={(selectedOption) => {
+                setOptions(selectedOption.label);
+                setTicketType(selectedOption.value);
+              }}
               options={ticketOptions}
             />
           </div>
