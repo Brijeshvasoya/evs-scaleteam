@@ -6,7 +6,7 @@ import classnames from "classnames";
 const InputPasswordToggle = forwardRef((props, ref) => {
   const {
     label,
-    visible,
+    visible = false,
     className,
     htmlFor,
     placeholder,
@@ -15,13 +15,14 @@ const InputPasswordToggle = forwardRef((props, ref) => {
     invalid,
     ...rest
   } = props;
+
   const [inputVisibility, setInputVisibility] = useState(visible);
 
   const renderIcon = () => {
-    const size = iconSize ? iconSize : 14;
+    const size = iconSize || 14;
     return inputVisibility
-      ?  <EyeOff size={size} />
-      :  <Eye size={size} />;
+      ? <EyeOff size={size} />
+      : <Eye size={size} />;
   };
 
   const handleIconClick = (e) => {
@@ -34,7 +35,7 @@ const InputPasswordToggle = forwardRef((props, ref) => {
       {label && (
         <Label
           className="block text-sm font-medium text-gray-700"
-          for={htmlFor}
+          htmlFor={htmlFor}
         >
           {label}
           <span className="text-red-500">*</span>
@@ -64,5 +65,7 @@ const InputPasswordToggle = forwardRef((props, ref) => {
     </Fragment>
   );
 });
+
+InputPasswordToggle.displayName = 'InputPasswordToggle';
 
 export default InputPasswordToggle;

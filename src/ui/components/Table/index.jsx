@@ -1,11 +1,11 @@
 import React, { Fragment } from "react";
 import DataTable from "react-data-table-component";
-import { ChevronDown, Eye, Trash,Edit } from "react-feather";
+import { ChevronDown, Eye, Trash, Edit } from "react-feather";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import _ from "lodash";
 import "./table.css";
 
-const Table = ({ columns, data, editData, deleteData,viewData }) => {
+const Table = ({ columns, data, editData, deleteData, viewData }) => {
   const customStyles = {
     rows: {
       style: {
@@ -21,7 +21,6 @@ const Table = ({ columns, data, editData, deleteData,viewData }) => {
     },
     table: {
       style: {
-        // padding: "1rem 0",
         backgroundColor: "transparent",
       },
     },
@@ -34,7 +33,7 @@ const Table = ({ columns, data, editData, deleteData,viewData }) => {
   };
   const actionColumn = {
     name: "Actions",
-    selector: "actions",
+    selector: (row) => row.actions,
     cell: (row) => (
       <div className="flex space-x-3 justify-center">
         {editData ? (

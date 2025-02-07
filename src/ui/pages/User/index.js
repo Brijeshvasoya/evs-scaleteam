@@ -6,17 +6,16 @@ import { useDispatch } from "react-redux";
 import ConfirmationModal from "../../components/Alert";
 import { toast } from "react-toastify";
 
-
 const Index = () => {
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("users"));
   const newUser = user.filter((item) => item.role !== "Admin");
-  const [data,setData]=useState(newUser);
+  const [data, setData] = useState(newUser);
 
-  const handleChange=(e)=>{
-    const newData=newUser.filter(row=>{
-      return row.fname?.toLowerCase().includes(e.target.value?.toLowerCase())
-    })
+  const handleChange = (e) => {
+    const newData = newUser.filter(row => 
+      row.fname?.toLowerCase().includes(e.target.value?.toLowerCase())
+    );
     setData(newData);
   }
 
@@ -36,7 +35,7 @@ const Index = () => {
           "ok",
           false
         ).then(() => {
-          const deleteUser={...row,isDeleted:true}
+          const deleteUser = {...row, isDeleted: true}
           console.log(deleteUser)
           dispatch({ type: "EDIT_USER", payload: { data: deleteUser } });
         });
@@ -45,6 +44,21 @@ const Index = () => {
       }
     });
   };
+
+  // Add status column to the existing user table columns
+  const columnsWithStatus = [
+    ...userTable,
+    {
+      name: "Status",
+      selector: row => row.isDeleted ? "Inactive" : "Active",
+      cell: row => (
+        <span className={`px-2 py-1 rounded text-xs ${row.isDeleted ? "bg-red-200 text-red-800" : "bg-green-200 text-green-800"}`}>
+          {row.isDeleted ? "Inactive" : "Active"}
+        </span>
+      )
+    }
+  ];
+
   return (
     <div>
       <div className="flex justify-between mt-4 space-x-4">
@@ -57,7 +71,7 @@ const Index = () => {
       </div>
       <div className="my-5">
         <Table
-          columns={userTable}
+          columns={columnsWithStatus}
           data={data || []}
           deleteData={deleteUser}
         />
