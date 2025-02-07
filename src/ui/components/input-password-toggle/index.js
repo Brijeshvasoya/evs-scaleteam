@@ -1,6 +1,6 @@
 import { Fragment, useState, forwardRef } from "react";
 import { Eye, EyeOff } from "react-feather";
-import { InputGroup, Input, InputGroupText, Label } from "reactstrap";
+import {  Input, InputGroupText, Label } from "reactstrap";
 import classnames from "classnames";
 
 const InputPasswordToggle = forwardRef((props, ref) => {

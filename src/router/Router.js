@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState, Suspense } from "react";
+import React, { memo, useEffect, Suspense } from "react";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { routes } from "./routes";
 import { useSelector } from "react-redux";
@@ -19,7 +19,7 @@ const PublicRoute = (props) => {
         navigate("/admin-dashboard");
       }
     }
-  }, [token, navigate]);
+  }, [token, navigate, role]);
 
   return <Component />;
 };
@@ -36,7 +36,7 @@ const ProtectRoute = (props) => {
     } else if (role === "Admin") {
       navigate(-1);
     }
-  }, [token, navigate]);
+  }, [token, navigate, role]);
 
   return (
     <div className="flex">
@@ -63,7 +63,7 @@ const AdminRoute = (props) => {
     if (role !== "Admin") {
       navigate(-1);
     }
-  }, [token, navigate]);
+  }, [token, navigate, role]);
 
   return (
     <div className="flex">

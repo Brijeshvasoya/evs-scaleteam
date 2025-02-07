@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Input } from "reactstrap";
 import Select from "react-select";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import Table from "../../components/Table";
 import { userParticipateEventTable } from "../../components/Constant";
 import CardModal from "../../components/Modal/CardModal";

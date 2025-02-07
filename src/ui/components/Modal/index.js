@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Modal, ModalBody, ModalFooter, ModalHeader, Badge } from "reactstrap";
+import { Modal, ModalBody, ModalHeader, Badge } from "reactstrap";
 import { Button } from "reactstrap";
 import { X } from "react-feather";
 import "./model.css";

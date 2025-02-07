@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Button } from "reactstrap";
 import Table from "../../components/Table";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import moment from "moment";
 import { eventTable, participateEventTable } from "../../components/Constant";
 import CardModal from "../../components/Modal/CardModal";
@@ -9,7 +9,6 @@ import Card from "../../components/Card";
 import Ticket from "../../components/Ticket";
 
 const Index = () => {
-  const dispatch = useDispatch();
   const { eventData } = useSelector((state) => state.user);
   const { activeUser } = useSelector((state) => state.user);
   const { participate } = useSelector((state) => state.user);
@@ -25,7 +24,7 @@ const Index = () => {
     if (role === "Admin") {
       setData(eventData);
     }
-  }, [eventData]);
+  }, [eventData, role]);
 
   const toggleViewModel = () => {
     setView(true);

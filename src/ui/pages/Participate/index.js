@@ -6,7 +6,6 @@ import moment from "moment";
 import Select from "react-select";
 import { Label, Button } from "reactstrap";
 import { toast } from "react-toastify";
-import { v4 as uuidv4 } from "uuid";
 
 const Index = () => {
   const { id } = useParams();

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Label, Button, Input, FormGroup, FormText } from "reactstrap";
+import { Label, Button, Input, FormText } from "reactstrap";
 import { useForm, Controller } from "react-hook-form";
 import { Camera, Trash2 } from "react-feather";
 import { toast } from "react-toastify";
@@ -15,7 +15,6 @@ const Index = () => {
     control,
     handleSubmit,
     setValue,
-    watch,
     formState: { errors },
   } = useForm();
   const dispatch = useDispatch();

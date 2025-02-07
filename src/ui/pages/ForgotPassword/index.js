@@ -20,7 +20,6 @@ const ForgotPassword = () => {
     handleSubmit,
     reset,
     watch,
-    register,
     formState: { errors },
   } = useForm({
     mode: "onSubmit",

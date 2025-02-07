@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -24,7 +24,6 @@ const Index = () => {
   const cover = require(`../../../assets/images/pages/login-v2.avif`);
 
   const {
-    register,
     handleSubmit,
     control,
     reset,
@@ -178,7 +177,6 @@ const Index = () => {
                   type="checkbox"
                   className="mr-2"
                   id="remember-me"
-                  defaultChecked={false}
                   onChange={() => setRememberMe(!rememberMe)}
                 />
                 <Label className="text-sm text-gray-600" htmlFor="remember-me">

@@ -1,15 +1,10 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment} from "react";
 import NavbarUser from "./NavbarUser";
 import { useSelector } from "react-redux";
 
 const Index = (props) => {
-    const [user,setUser]=useState([])
       const{activeUser}=useSelector(state=>state.user)
-    useEffect(()=>{
-      const user=  JSON.parse(localStorage.getItem("active_user"))
-      setUser(user)
-    },[])
-
+    
   return (
     <Fragment>
       <div className="flex justify-between items-center p-4 mx-5 my-5 bg-slate-800 text-white rounded-md shadow-lg">

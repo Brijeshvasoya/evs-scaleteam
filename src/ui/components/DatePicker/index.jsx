@@ -5,10 +5,11 @@ import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/flatpickr.css";
 
 const DatePicker = React.forwardRef(
-  ({ value, onChange, max, min,placeholder, disable,inputClassName }) => {
+  ({ value, onChange, max, min, placeholder, disable, inputClassName }, ref) => {
     return (
       <Fragment>
           <Flatpickr
+            ref={ref}
             key={Math.random(6)}
             value={value}
             id="disabled-picker"
@@ -41,5 +42,7 @@ const DatePicker = React.forwardRef(
     );
   }
 );
+
+DatePicker.displayName = 'DatePicker';
 
 export default DatePicker;

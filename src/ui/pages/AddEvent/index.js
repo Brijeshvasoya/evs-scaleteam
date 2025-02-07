@@ -4,10 +4,8 @@ import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
 import DatePicker from "../../components/DatePicker";
 import { toast } from "react-toastify";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
-  CardTitle,
-  CardText,
   Form,
   Label,
   Input,
