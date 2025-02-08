@@ -31,60 +31,99 @@ const Index = () => {
   const [option, setOption] = useState(eventTable);
   const [ticket, setTicket] = useState(false);
   const [showTicket, setShowTicket] = useState(false);
-
   useEffect(() => {
-    if (role !== "admin") {
-      setData(getEvents?.events);
+    if (role !== "admin" && getEvents?.events) {
+      const events = convertDate(getEvents.events);
+      setData(events);
     }
-  }, [getEvents?.events]);
+  }, [getEvents?.events, role]);
+
+  const convertDate = (date) => {
+    if (!date) return [];
+    if (date.eventdate) {
+      return [{
+        ...date,
+        eventdate: new Date(parseInt(date.eventdate)).toLocaleDateString(),
+      }];
+    }
+    if (Array.isArray(date)) {
+      return date.map((event) => ({
+        ...event,
+        eventdate: event.eventdate 
+          ? new Date(parseInt(event.eventdate)).toLocaleDateString() 
+          : 'N/A',
+      }));
+    }
+    if (typeof date === 'object') {
+      const arrayProperty = Object.values(date).find(Array.isArray);
+      if (arrayProperty) {
+        return arrayProperty.map((event) => ({
+          ...event,
+          eventdate: event.eventdate 
+            ? new Date(parseInt(event.eventdate)).toLocaleDateString() 
+            : 'N/A',
+        }));
+      }
+    }
+    console.warn('Unable to convert date: unexpected input type');
+    return [];
+  };
 
   const toggleViewModel = () => {
     setView(true);
     setTicket(false);
     setShowTicket(false);
   };
-
   const toggleTicketModel = () => {
     setView(true);
     setTicket(false);
   };
-
   const viewEventData = (row) => {
     setViewEvent(row);
     setView(false);
     setTicket(false);
   };
-
   const viewTicketData = (row) => {
     setViewEvent(row);
     setTicket(true);
     setView(true);
   };
-
   const allEvent = () => {
-    setData(getEvents?.events);
+    const events = convertDate(getEvents.events);
+    setData(events);
     setOption(eventTable);
     setShowTicket(false);
   };
-
   const participatedEvent = () => {
-    console.log(getParticipants?.participate);
-    setData(getParticipants?.participate);
+    if (!getParticipants?.participate) {
+      setData([]);
+      setOption(participateEventTable);
+      setShowTicket(true);
+      return;
+    }
+    const eventId = getParticipants.participate[0]?.eventId;
+    const convertedEvents = convertDate(eventId);
+    const filterEvents = getParticipants.participate.map((item) => ({
+      ...item,
+      eventId: convertedEvents[0] || null,
+    }));
+
+    setData(filterEvents);
     setOption(participateEventTable);
     setShowTicket(true);
   };
-
   const upComingEvent = () => {
     const filterEvent = getEvents?.events.filter((item) => {
       const eventDate = moment(item?.eventdate, "DD MMM YYYY");
       const today = moment();
       return eventDate.isSameOrAfter(today, "day");
     });
-    setData(filterEvent);
+    const filterEvents = convertDate(filterEvent);
+    setData(filterEvents);
     setOption(eventTable);
     setShowTicket(false);
   };
-
+  
   return (
     <Fragment>
       <div className="flex justify-between mt-4 space-x-4">
@@ -120,13 +159,11 @@ const Index = () => {
           viewData={showTicket ? viewTicketData : viewEventData}
         />
       </div>
-
       {!view && !ticket && (
         <CardModal modalOpen={!view} toggleModal={toggleViewModel}>
           <Card item={viewEvent} toggleModal={toggleViewModel} />
         </CardModal>
       )}
-
       {ticket && (
         <CardModal modalOpen={ticket} toggleModal={toggleTicketModel}>
           <Ticket item={viewEvent} toggleModal={toggleTicketModel} />

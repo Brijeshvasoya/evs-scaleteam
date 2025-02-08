@@ -6,9 +6,12 @@ import { useForm, Controller } from "react-hook-form";
 import { Camera, Trash2 } from "react-feather";
 import { toast } from "react-toastify";
 import { useCookies } from "react-cookie";
-import ConfirmationModal from '../../components/Alert';
+import { useMutation } from "@apollo/client";
+import ConfirmationModal from "../../components/Alert";
+import Spinner from "../../components/Spinner";
 import DatePicker from "../../components/DatePicker";
 import dummyImg from "../../../assets/images/avatars/avatar-blank.png";
+import { UPDATE_PROFILE } from "./mutation";
 
 const Index = () => {
   const {
@@ -17,26 +20,43 @@ const Index = () => {
     setValue,
     formState: { errors },
   } = useForm();
+  const [UpdateUser, { loading }] = useMutation(UPDATE_PROFILE, {
+    context: {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    },
+  });
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { activeUser } = useSelector((state) => state.user);
   const [base64Url, setBase64Url] = useState("");
   const [cancel, setCancel] = useState(false);
+  const [profilePicture, setProfilePicture] = useState(null);
   const [, removeCookie] = useCookies();
 
   useEffect(() => {
+    const storedUser = localStorage.getItem("active_user");
+    const localProfilePicture = storedUser ? JSON.parse(storedUser).profilePicture : null;
+    if (localProfilePicture) {
+      setProfilePicture(localProfilePicture);
+      setCancel(true);
+    } 
+    else if (activeUser?.profilePicture) {
+      setProfilePicture(activeUser.profilePicture);
+      setCancel(true);
+    }
     if (activeUser) {
+      const parsedDob = activeUser?.dob
+        ? new Date(parseInt(activeUser.dob))
+        : null;
       setValue("fname", activeUser?.fname);
       setValue("lname", activeUser?.lname);
       setValue("email", activeUser?.email);
-      setValue("dob", activeUser?.dob);
-      setValue("password", activeUser?.password);
+      setValue("dob", parsedDob);
       setValue("age", activeUser?.age);
     }
-    if (activeUser?.profilePicture) {
-      setCancel(true);
-    }
-  }, [activeUser, setValue]);
+  }, [activeUser]);
 
   useEffect(() => {
     if (base64Url) {
@@ -57,40 +77,49 @@ const Index = () => {
   };
 
   const onSubmit = (data) => {
-    let newDetail
+    data.dob = new Date(data.dob).toISOString();
+    let newDetail;
     if (base64Url) {
-       newDetail = {
+      newDetail = {
         ...data,
-        id: activeUser?.id,
+        _id: activeUser?._id,
         profilePicture: base64Url,
-        isVerified: true,
-        role: activeUser?.role,
-        isDeleted:false
       };
-    //   dispatch({ type: "EDIT_USER", payload: { data: newDetail } });
-    //   dispatch({ type: "LOGIN_USER", payload: { data: newDetail } });
     } else {
-       newDetail = {
+      newDetail = {
         ...data,
-        id: activeUser?.id,
-        isVerified: true,
-        role: activeUser?.role,
-        isDeleted:false
+        _id: activeUser?._id,
       };
     }
-    dispatch({ type: "EDIT_USER", payload: { data: newDetail } });
-    dispatch({ type: "LOGIN_USER", payload: { data: newDetail } });
-    if (activeUser?.role === "admin") {
-      navigate("/admin-dashboard");
-    } else {
-      navigate("/dashboard");
-    }
-    toast.success("Your Profile Updated Successfully", { autoClose: 1000 });
+    UpdateUser({
+      variables: {
+        userData: newDetail,
+      },
+    })
+      .then(({ data: responseData }) => {
+        const updatedUser = {
+          ...activeUser,
+          profilePicture: base64Url || activeUser?.profilePicture,
+        };
+        localStorage.setItem("active_user", JSON.stringify(updatedUser));
+        setProfilePicture(base64Url || activeUser?.profilePicture);
+        if (activeUser?.role === "admin") {
+          navigate("/admin-dashboard");
+        } else {
+          navigate("/dashboard");
+        }
+        toast.success("Your Profile Updated Successfully", { autoClose: 1000 });
+      })
+      .catch((error) => {
+        toast.error(error?.message, { autoClose: 2000 });
+      });
   };
   const removeImg = () => {
-    const newDetail = { ...activeUser, profilePicture: null };
-    dispatch({ type: "LOGIN_USER", payload: { data: newDetail } });
+    const updatedUser = { ...activeUser, profilePicture: null };
+    localStorage.setItem("active_user", JSON.stringify(updatedUser));
+    dispatch({ type: "LOGIN_USER", payload: { data: updatedUser } });
     setBase64Url(null);
+    setProfilePicture(null);
     setCancel(false);
     toast.success("Your Profile Photo is Removed", { autoClose: 1000 });
   };
@@ -132,9 +161,10 @@ const Index = () => {
           <div>
             <img
               src={
-                cancel
-                  ? base64Url || activeUser?.profilePicture || dummyImg
-                  : base64Url || dummyImg
+                base64Url || 
+                profilePicture || 
+                activeUser?.profilePicture || 
+                dummyImg
               }
               alt="Profile"
               className="rounded-full h-24 w-24 object-cover"
@@ -170,13 +200,11 @@ const Index = () => {
           </div>
         </div>
       </div>
-
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="form-section bg-[#f3f2f0] p-6 rounded-lg shadow-md mb-6">
           <h3 className="text-xl font-semibold text-gray-700">
             Basic Information
           </h3>
-
           <div className="mt-4">
             <div className="mb-4">
               <Label

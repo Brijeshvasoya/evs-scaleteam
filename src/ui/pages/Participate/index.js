@@ -182,7 +182,7 @@ const Index = () => {
             </Label>
             <div className="mt-1 p-3 w-full bg-gray-100 rounded-lg border border-gray-300">
               {fetchData?.eventdate
-                ? moment(fetchData?.eventdate).format("MMMM Do YYYY")
+                ? moment(fetchData?.eventdate).format("Do MMMM YYYY")
                 : "N/A"}
             </div>
           </div>

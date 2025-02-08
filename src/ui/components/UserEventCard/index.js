@@ -35,7 +35,7 @@ const index = ({ item, toggleModal }) => {
             <div className="text-sm text-gray-700">
               <span>
                 {item?.eventdate
-                  ? moment(item?.eventdate).format("MMMM Do YYYY")
+                  ? moment(item?.eventdate).format("Do MMMM YYYY")
                   : "N/A"}
               </span>
             </div>

@@ -2,6 +2,7 @@ import React, { Fragment } from "react";
 import moment from "moment";
 
 const index = ({ item, toggleModal }) => {
+  console.log(item?.eventId?.eventdate);
   return (
     <Fragment>
       <div className="bg-[#f3f2f0] w-[550px] h-auto rounded-lg shadow-lg p-6 flex flex-col">
@@ -24,11 +25,8 @@ const index = ({ item, toggleModal }) => {
           <div>
             <div className="text-sm text-gray-700">
               <span>
-                {item?.eventId?.eventdate &&
-                moment(Number(item?.eventId?.eventdate)).isValid()
-                  ? moment(Number(item?.eventId?.eventdate)).format(
-                      "MMMM Do YYYY"
-                    )
+                {item?.eventId?.eventdate
+                  ? moment(item?.eventId?.eventdate).format("Do MMMM YYYY")
                   : "N/A"}
               </span>
             </div>

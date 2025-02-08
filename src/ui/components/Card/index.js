@@ -27,11 +27,8 @@ const CardComponent = ({ item }) => {
           <div>
             <div className="text-sm text-gray-700">
               <span>
-                {item?.eventdate &&
-                moment(Number(item?.eventdate)).isValid()
-                  ? moment(Number(item?.eventdate)).format(
-                      "MMMM Do YYYY"
-                    )
+                {item?.eventdate
+                  ? moment(item?.eventdate).format("Do MMMM YYYY")
                   : "N/A"}
               </span>
             </div>
