@@ -49,10 +49,7 @@ const Index = () => {
             setCookie("remember", JSON.stringify(data?.email));
           }
           if (data?.signInUser?.token) {
-            localStorage.setItem(
-              "token",
-              JSON.stringify(data?.signInUser?.token)
-            );
+            localStorage.setItem("token", data?.signInUser?.token);
             dispatch({
               type: "LOGIN_USER",
               payload: { data: data?.signInUser?.user },
