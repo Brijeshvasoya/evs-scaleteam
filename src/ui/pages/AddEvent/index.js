@@ -1,20 +1,24 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import moment from "moment";
-import { v4 as uuidv4 } from "uuid";
+import { useMutation, useQuery } from "@apollo/client";
+import { ADD_EVENT, EDIT_EVENT } from "./mutation";
+import { GET_ALL_EVENTS } from "../Dashboard/query";
 import DatePicker from "../../components/DatePicker";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
-import {
-  Form,
-  Label,
-  Input,
-  Button,
-  FormText,
-} from "reactstrap";
+import { Form, Label, Input, Button, FormText } from "reactstrap";
 
 const Index = ({ toggleModal, editEvent, setEditEvent }) => {
-  console.log(editEvent)
+  const [createEvent, { loading }] = useMutation(ADD_EVENT);
+  const { refetch } = useQuery(GET_ALL_EVENTS);
+  const [EditEvent, { loading: editLoading }] = useMutation(EDIT_EVENT, {
+    context: {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    },
+  });
   const dispatch = useDispatch();
   const [edit, setEdit] = useState();
 
@@ -40,35 +44,68 @@ const Index = ({ toggleModal, editEvent, setEditEvent }) => {
   }, [editEvent, setValue]);
 
   const onSubmit = (data, e) => {
-      e.preventDefault();
-      data.eventdate = moment(data.eventdate).format("DD MMM YYYY");
+    e.preventDefault();
+    data.eventdate = moment(data.eventdate).format("DD MMM YYYY");
 
-      if (!editEvent) {
-        const addEvent = { ...data, id: uuidv4() };
-        dispatch({ type: "ADD_EVENT", payload: { data: addEvent } });
-        toast.success("Your Event Successfully Add", { autoClose: 1000 });
-      } else {
-        const updatedEvent = { ...data, id: edit?.id };
-        console.log(updatedEvent, "updated");
-        dispatch({ type: "EDIT_EVENT", payload: { data: updatedEvent } });
-        toast.success("Event Edit Successfully", { autoClose: 1000 });
-        setEdit(null);
-        setEditEvent(null);
+    if (!editEvent) {
+      if (data) {
+        createEvent({ variables: { eventNew: data } })
+          .then(() => {
+            refetch();
+            toast.success("Your Event Successfully Add", { autoClose: 1000 });
+          })
+          .catch((error) => {
+            toast.error(error?.message, { autoClose: 2000 });
+          });
       }
+      else {
+        toast.error("Please fill all the fields", { autoClose: 2000 });
+      }
+    } else {
+      if (data) {
+        EditEvent({ variables: { eventId: editEvent._id, eventUpdate: data } })
+          .then(() => {
+            toast.success("Event Edit Successfully", { autoClose: 1000 });
+            setEdit(null);
+            setEditEvent(null);
+          })
+          .catch((error) => {
+            toast.error(error?.message, { autoClose: 2000 });
+          });
+      }
+      else {
+        toast.error("Please fill all the fields", { autoClose: 2000 });
+      }
+    }
     toggleModal();
   };
 
   return (
-    <Fragment>
-      <div className="w-auto flex items-center justify-center">
-        <div
-          className="max-w-md w-full rounded-lg shadow-lg p-8"
-          style={{ backgroundColor: "#f3f2f0" }}
-        >
-          <Form onSubmit={handleSubmit(onSubmit)}>
-            <div className="-mt-3 mb-2">
+    <div className="flex w-full min-h-[500px] bg-white rounded-lg overflow-hidden shadow-xl">
+      <div className="w-1/3 bg-slate-800 text-white p-8 flex flex-col justify-center items-center space-y-4 relative">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-white mb-4">
+            {editEvent ? "Edit Event" : "Add New Event"}
+          </h2>
+          <p className="text-gray-300 text-lg leading-relaxed">
+            {editEvent
+              ? "Update the details of your existing event with precision and care."
+              : "Create a new event and invite participants to an unforgettable experience."}
+          </p>
+        </div>
+        <div className="absolute bottom-8 left-0 right-0 text-center">
+          <div className="inline-block bg-slate-700 text-white px-4 py-2 rounded-full text-sm font-semibold">
+            {editEvent ? "Editing Mode" : "Creation Mode"}
+          </div>
+        </div>
+      </div>
+
+      <div className="w-2/3 bg-white p-8 overflow-y-auto">
+        <Form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div className="grid grid-cols-2 gap-6">
+            <div>
               <Label
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-700 mb-2"
                 for="ename"
               >
                 Event Name<span className="text-red-500">&#42;</span>
@@ -84,10 +121,10 @@ const Index = ({ toggleModal, editEvent, setEditEvent }) => {
                       type="text"
                       id="ename"
                       placeholder="Please Enter Event Name"
-                      className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-300"
                     />
                     {errors.ename && (
-                      <FormText className="text-red-500">
+                      <FormText className="text-red-500 mt-1">
                         {errors.ename.message}
                       </FormText>
                     )}
@@ -95,9 +132,10 @@ const Index = ({ toggleModal, editEvent, setEditEvent }) => {
                 )}
               />
             </div>
-            <div className="mb-2">
+
+            <div>
               <Label
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-700 mb-2"
                 for="hname"
               >
                 Host Name<span className="text-red-500">&#42;</span>
@@ -113,10 +151,10 @@ const Index = ({ toggleModal, editEvent, setEditEvent }) => {
                       type="text"
                       id="hname"
                       placeholder="Please Enter Host Name"
-                      className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-300"
                     />
                     {errors.hname && (
-                      <FormText className="text-red-500">
+                      <FormText className="text-red-500 mt-1">
                         {errors.hname.message}
                       </FormText>
                     )}
@@ -124,39 +162,42 @@ const Index = ({ toggleModal, editEvent, setEditEvent }) => {
                 )}
               />
             </div>
-            <div className="mb-2">
-              <Label
-                className="block text-sm font-medium mb-2 text-gray-700"
-                for="eventdate"
-              >
-                Event Date<span className="text-red-500">&#42;</span>
-              </Label>
-              <Controller
-                name="eventdate"
-                control={control}
-                rules={{ required: "Event Date is required" }}
-                render={({ field: { onChange, value } }) => (
-                  <DatePicker
-                    min={moment()._d}
-                    onChange={(e) => onChange(e[0])}
-                    placeholder="Enter Event Date"
-                    className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    value={
-                      edit?.eventdate ? moment(edit?.eventdate).toDate() : value
-                    }
-                  />
-                )}
-              />
-              {errors?.eventdate && (
-                <FormText className="text-red-500">
-                  {errors.eventdate.message}
-                </FormText>
-              )}
-            </div>
+          </div>
 
-            <div className="mb-2">
+          <div>
+            <Label
+              className="block text-sm font-medium mb-2 text-gray-700"
+              for="eventdate"
+            >
+              Event Date<span className="text-red-500">&#42;</span>
+            </Label>
+            <Controller
+              name="eventdate"
+              control={control}
+              rules={{ required: "Event Date is required" }}
+              render={({ field: { onChange, value } }) => (
+                <DatePicker
+                  min={moment()._d}
+                  onChange={(e) => onChange(e[0])}
+                  placeholder="Enter Event Date"
+                  className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-300"
+                  value={
+                    edit?.eventdate ? moment(edit?.eventdate).toDate() : value
+                  }
+                />
+              )}
+            />
+            {errors?.eventdate && (
+              <FormText className="text-red-500 mt-1">
+                {errors.eventdate.message}
+              </FormText>
+            )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-6">
+            <div>
               <Label
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-700 mb-2"
                 for="hno"
               >
                 House/Flat no/Office no/Floor no
@@ -173,10 +214,10 @@ const Index = ({ toggleModal, editEvent, setEditEvent }) => {
                       type="text"
                       id="hno"
                       placeholder="Please Enter House/Flat no/Office no/Floor no"
-                      className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-300"
                     />
                     {errors.hno && (
-                      <FormText className="text-red-500">
+                      <FormText className="text-red-500 mt-1">
                         {errors.hno.message}
                       </FormText>
                     )}
@@ -185,9 +226,9 @@ const Index = ({ toggleModal, editEvent, setEditEvent }) => {
               />
             </div>
 
-            <div className="mb-2">
+            <div>
               <Label
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-700 mb-2"
                 for="address"
               >
                 Address<span className="text-red-500">&#42;</span>
@@ -203,10 +244,10 @@ const Index = ({ toggleModal, editEvent, setEditEvent }) => {
                       type="text"
                       id="address"
                       placeholder="Please Enter Address"
-                      className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-300"
                     />
                     {errors.address && (
-                      <FormText className="text-red-500">
+                      <FormText className="text-red-500 mt-1">
                         {errors.address.message}
                       </FormText>
                     )}
@@ -214,85 +255,20 @@ const Index = ({ toggleModal, editEvent, setEditEvent }) => {
                 )}
               />
             </div>
-            <div className="flex justify-between mb-2">
-              <Label
-                className="block text-sm font-medium text-gray-700"
-                for="vipticket"
-              >
-                VIP Ticket<span className="text-red-500">&#42;</span>
-              </Label>
-              <Label
-                className="block text-sm font-medium text-gray-700"
-                for="vvipticket"
-              >
-                VVIP Ticket<span className="text-red-500">&#42;</span>
-              </Label>
-            </div>
-            <div className="flex justify-between mb-2">
-              <Controller
-                name="vipticket"
-                control={control}
-                rules={{ required: "Enter your VIP ticket rate" }}
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    type="text"
-                    id="vipticket"
-                    placeholder="VIP Ticket Rate"
-                    className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  />
-                )}
-              />
-              <Controller
-                name="vvipticket"
-                control={control}
-                rules={{ required: "Enter your VVIP ticket rate" }}
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    type="text"
-                    id="vvipticket"
-                    placeholder="VVIP Ticket Rate"
-                    className="mt-2 p-3 mx-2 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  />
-                )}
-              />
-            </div>
-            <div className="mb-2">
-              <Label
-                className="block text-sm font-medium text-gray-700"
-                for="goldticket"
-              >
-                GOLD Ticket<span className="text-red-500">&#42;</span>
-              </Label>
-              <Controller
-                name="goldticket"
-                control={control}
-                rules={{ required: "Enter your Gold ticket rate" }}
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    type="text"
-                    id="goldticket"
-                    placeholder="Gold Ticket Rate"
-                    className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  />
-                )}
-              />
-            </div>
+          </div>
 
+          <div className="flex justify-end space-x-4 mt-6">
             <Button
               type="submit"
               color="primary"
-              block
-              className="w-full py-0 h-12 text-white font-medium rounded-lg bg-slate-800 hover:bg-sl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="px-6 py-3 text-white font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105"
             >
-               {!edit ? "Submit" : "Edit" }
+              {!edit ? "Create Event" : "Update Event"}
             </Button>
-          </Form>
-        </div>
+          </div>
+        </Form>
       </div>
-    </Fragment>
+    </div>
   );
 };
 

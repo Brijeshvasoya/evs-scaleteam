@@ -27,7 +27,7 @@ const UserDropdown = (props) => {
     dispatch({ type: "EDIT_USER", payload: { data: newUser } });
     localStorage.removeItem("active_user");
     localStorage.clear();
-    removeCookie("Remember");
+    removeCookie("remember");
     user=null
     toast.success("Logout Successfully", { autoClose: 1000 });
   };

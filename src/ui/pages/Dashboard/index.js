@@ -8,6 +8,7 @@ import CardModal from "../../components/Modal/CardModal";
 import Card from "../../components/Card";
 import Ticket from "../../components/Ticket";
 import { useQuery } from "@apollo/client";
+import { convertDate } from "../../../Utils/convertDate";
 import { GET_ALL_EVENTS, GET_PARTICIPANTS } from "../Dashboard/query";
 
 const Index = () => {
@@ -37,37 +38,6 @@ const Index = () => {
       setData(events);
     }
   }, [getEvents?.events, role]);
-
-  const convertDate = (date) => {
-    if (!date) return [];
-    if (date.eventdate) {
-      return [{
-        ...date,
-        eventdate: new Date(parseInt(date.eventdate)).toLocaleDateString(),
-      }];
-    }
-    if (Array.isArray(date)) {
-      return date.map((event) => ({
-        ...event,
-        eventdate: event.eventdate 
-          ? new Date(parseInt(event.eventdate)).toLocaleDateString() 
-          : 'N/A',
-      }));
-    }
-    if (typeof date === 'object') {
-      const arrayProperty = Object.values(date).find(Array.isArray);
-      if (arrayProperty) {
-        return arrayProperty.map((event) => ({
-          ...event,
-          eventdate: event.eventdate 
-            ? new Date(parseInt(event.eventdate)).toLocaleDateString() 
-            : 'N/A',
-        }));
-      }
-    }
-    console.warn('Unable to convert date: unexpected input type');
-    return [];
-  };
 
   const toggleViewModel = () => {
     setView(true);
@@ -123,7 +93,7 @@ const Index = () => {
     setOption(eventTable);
     setShowTicket(false);
   };
-  
+
   return (
     <Fragment>
       <div className="flex justify-between mt-4 space-x-4">
@@ -159,16 +129,21 @@ const Index = () => {
           viewData={showTicket ? viewTicketData : viewEventData}
         />
       </div>
-      {!view && !ticket && (
-        <CardModal modalOpen={!view} toggleModal={toggleViewModel}>
-          <Card item={viewEvent} toggleModal={toggleViewModel} />
-        </CardModal>
-      )}
-      {ticket && (
-        <CardModal modalOpen={ticket} toggleModal={toggleTicketModel}>
-          <Ticket item={viewEvent} toggleModal={toggleTicketModel} />
-        </CardModal>
-      )}
+      <CardModal
+        modalOpen={!view}
+        toggleModal={toggleViewModel}
+        title="Event Details"
+      >
+        <Card item={viewEvent} toggleModal={toggleViewModel} />
+      </CardModal>
+
+      <CardModal
+        modalOpen={ticket}
+        toggleModal={toggleTicketModel}
+        title="Ticket Details"
+      >
+        <Ticket item={viewEvent} toggleModal={toggleTicketModel} />
+      </CardModal>
     </Fragment>
   );
 };

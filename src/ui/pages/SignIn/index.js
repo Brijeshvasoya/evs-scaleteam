@@ -46,7 +46,8 @@ const Index = () => {
         .then(async ({ data }) => {
           console.log(data);
           if (rememberMe) {
-            setCookie("remember", JSON.stringify(data?.email));
+            const userEmail = data?.signInUser?.user?.email;
+            setCookie("remember", JSON.stringify(userEmail));
           }
           if (data?.signInUser?.token) {
             localStorage.setItem("token", data?.signInUser?.token);

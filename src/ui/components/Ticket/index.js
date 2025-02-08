@@ -2,7 +2,6 @@ import React, { Fragment } from "react";
 import moment from "moment";
 
 const index = ({ item, toggleModal }) => {
-  console.log(item?.eventId?.eventdate);
   return (
     <Fragment>
       <div className="bg-[#f3f2f0] w-[550px] h-auto rounded-lg shadow-lg p-6 flex flex-col">

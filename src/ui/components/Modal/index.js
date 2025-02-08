@@ -1,6 +1,5 @@
 import React, { Fragment } from "react";
 import { Modal, ModalBody, ModalHeader, Badge } from "reactstrap";
-import { Button } from "reactstrap";
 import { X } from "react-feather";
 import "./model.css";
 
@@ -16,31 +15,29 @@ const index = (props) => {
       <Modal
         isOpen={props.modalOpen}
         toggle={props.toggleModal}
-        className="fixed rounded-lg shadow-lg inset-0 z-50 flex justify-center items-center"
+        className="fixed inset-0 z-50 flex justify-center items-center"
       >
-        <ModalHeader
-          className="relative "
-          style={{ backgroundColor: "#f3f2f0" }}
-        >
-          <h1 className="relative top-6 p-5 text-2xl font-semibold right-0">
-            {props.title}
-          </h1>
-          <Button
-            className="bg-white absolute top-6  right-0 p-0 cursor-pointer"
-            onClick={props.toggleModal}
+        <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl">
+          <ModalHeader
+            className="relative flex items-center justify-between p-4 border-b border-gray-200 rounded-t-lg"
+            style={{ backgroundColor: "#f3f2f0" }}
           >
-            <Badge className="" onClick={props.toggleModal}>
-              <X />
+            <Badge
+              className="bg-[#f3f2f0] hover:bg-gray-100 absolute -right-2 -top-2 p-1 rounded-full cursor-pointer"
+              onClick={props.toggleModal}
+            >
+              <X className="text-gray-600 w-6 h-6" />
             </Badge>
-          </Button>
-        </ModalHeader>
+            <h1 className="text-2xl font-semibold mx-auto">{props.title}</h1>
+          </ModalHeader>
 
-        <ModalBody
-          className=" w-full max-w-7xl"
-          style={{ backgroundColor: "#f3f2f0" }}
-        >
-          {props?.children}
-        </ModalBody>
+          <ModalBody
+            className="p-4 rounded-b-lg"
+            style={{ backgroundColor: "#f3f2f0" }}
+          >
+            {props?.children}
+          </ModalBody>
+        </div>
       </Modal>
     </Fragment>
   );

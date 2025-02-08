@@ -145,7 +145,7 @@ const Index = () => {
           const newDetail = { ...activeUser, isDeleted: true };
           dispatch({ type: "EDIT_USER", payload: { data: newDetail } });
           localStorage.removeItem("active_user");
-          removeCookie("Remember");
+          removeCookie("remember");
           toast.error("Your Profile is Deleted", { autoClose: 2000 });
           navigate("/");
         });

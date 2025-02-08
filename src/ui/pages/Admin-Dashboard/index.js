@@ -1,25 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Input } from 'reactstrap';
-import Select from 'react-select';
-import Table from '../../components/Table';
-import AddEvent from '../AddEvent';
-import Modal from '../../components/Modal';
-import { eventTable } from '../../components/Constant';
-import ConfirmationModal from '../../components/Alert';
-import { useDispatch, useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
-
+import React, { useState, useEffect } from "react";
+import { Button, Input } from "reactstrap";
+import Select from "react-select";
+import Table from "../../components/Table";
+import AddEvent from "../AddEvent";
+import Modal from "../../components/Modal";
+import { useQuery, useMutation } from "@apollo/client";
+import Spinner from "../../components/Spinner";
+import { eventTable } from "../../components/Constant";
+import ConfirmationModal from "../../components/Alert";
+import { toast } from "react-toastify";
+import { convertDate } from "../../../Utils/convertDate";
+import { GET_ALL_EVENTS } from "../Dashboard/query";
+import { DELETE_EVENT } from "../Dashboard/mutation";
 
 const Index = () => {
-  const dispatch = useDispatch();
-  const { eventData } = useSelector((state) => state.user);
+  const { loading, error, data: eventData, refetch } = useQuery(GET_ALL_EVENTS);
+  const [DeleteEvent, { loading: deleteloading }] = useMutation(DELETE_EVENT, {
+    context: {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    },
+  });
   const [modalOpen, setModalOpen] = useState(false);
   const [editEvent, setEditEvent] = useState(null);
-  const [data, setData] = useState(eventData);
-  const [sort, setSort] = useState('ename');
+  const [data, setData] = useState([]);
+  const [sort, setSort] = useState("ename");
 
   useEffect(() => {
-    setData(eventData);
+    refetch();
+    if (eventData?.events) {
+      const events = convertDate(eventData.events);
+      setData(events);
+    }
   }, [eventData]);
 
   const toggleModal = () => {
@@ -31,16 +44,16 @@ const Index = () => {
   };
 
   const handleSearch = (e) => {
-    const filteredData = eventData.filter((event) =>
+    const filteredData = eventData?.events.filter((event) =>
       event[sort]?.toLowerCase().includes(e.target.value?.toLowerCase())
     );
     setData(filteredData);
   };
 
-  const editData =(event)=>{
+  const editData = (event) => {
     setEditEvent(event);
     toggleModal();
-  }
+  };
 
   const deleteEvent = (row) => {
     ConfirmationModal(
@@ -53,15 +66,22 @@ const Index = () => {
       if (result.isConfirmed) {
         ConfirmationModal(
           "success",
-          "Deleted!",
-          "Employee has been deleted.",
+          "Deleting...",
+          "Please wait while the event is being deleted.",
           "ok",
           false
         ).then(() => {
-          dispatch({ type: "DELETE_EVENT", payload: { data: row } });
+          DeleteEvent({
+            variables: { eventId: row._id },
+          }).then(() => {
+            toast.success("Event deleted successfully");
+            refetch();
+          }).catch((err) => {
+            toast.error(err?.message || "Failed to delete event");
+          });
         });
       } else {
-        toast.error("Event not deleted");
+        toast.error("Event deletion cancelled");
       }
     });
   };
@@ -84,12 +104,36 @@ const Index = () => {
   };
 
   const options = [
-    { value: 'ename', label: 'Event Name' },
-    { value: 'hname', label: 'Host Name' },
-    { value: 'vipticket', label: 'VIP Ticket' },
-    { value: 'vvipticket', label: 'VVIP Ticket' },
-    { value: 'goldticket', label: 'Gold Ticket' },
+    { value: "ename", label: "Event Name" },
+    { value: "hname", label: "Host Name" },
+    { value: "vipticket", label: "VIP Ticket" },
+    { value: "vvipticket", label: "VVIP Ticket" },
+    { value: "goldticket", label: "Gold Ticket" },
   ];
+
+  if (loading || deleteloading) {
+    return (
+      <div className="flex justify-center items-center h-full min-h-[500px]">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-full min-h-[500px] text-red-500">
+        Error loading events: {error.message}
+      </div>
+    );
+  }
+
+  if (!eventData?.events || eventData.events.length === 0) {
+    return (
+      <div className="flex justify-center items-center h-full min-h-[500px] text-gray-500">
+        No events found
+      </div>
+    );
+  }
 
   return (
     <>
@@ -120,10 +164,6 @@ const Index = () => {
         <Table
           columns={eventTable}
           data={data}
-          // editData={(event) => {
-          //   setEditEvent(event);
-          //   toggleModal();
-          // }}
           editData={editData}
           deleteData={deleteEvent}
         />
@@ -133,7 +173,7 @@ const Index = () => {
         <Modal
           modalOpen={modalOpen}
           toggleModal={toggleModal}
-          title={editEvent ? 'Edit Event' : 'Add Event'}
+          title={editEvent ? "Edit Event" : "Add Event"}
         >
           <AddEvent
             toggleModal={toggleModal}
@@ -146,5 +186,4 @@ const Index = () => {
   );
 };
 
-
-export default Index
+export default Index;
