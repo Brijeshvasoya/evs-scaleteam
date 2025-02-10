@@ -9,11 +9,14 @@ import { useQuery, useMutation } from "@apollo/client";
 import { GET_EVENT } from "./query.js";
 import { PARTICIPATE } from "./mutation";
 import Spinner from "../../components/Spinner";
+import { GET_PARTICIPANTS } from "../Dashboard/query";
+  
 
 const Index = () => {
   const { id } = useParams();
   const { data, loading: eventLoading, error: eventError } = useQuery(GET_EVENT, { variables: { id } });
   const token = localStorage.getItem("token");
+  const { activeUser } = useSelector((state) => state.user);
 
   const [ParticipateEvent, { loading: participateLoading, error: participateError }] = useMutation(
     PARTICIPATE,
@@ -25,7 +28,17 @@ const Index = () => {
       },
     }
   );
-  const { activeUser } = useSelector((state) => state.user);
+  const { refetch } = useQuery(
+    GET_PARTICIPANTS,
+    { variables: { userId: activeUser?._id } },
+    {
+      context: {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      },
+    }
+  );
   const navigate = useNavigate();
   const [fetchData, setFetchData] = useState(null);
   const [ticketType, setTicketType] = useState(null);
@@ -56,13 +69,9 @@ const Index = () => {
       return;
     }
 
-    // Precise date validation for Unix timestamp
     const eventDate = new Date(parseInt(fetchData.eventdate));
     const today = new Date();
-    today.setHours(0, 0, 0, 0);  // Reset time to start of day
-
-    console.log("Parsed Event Date:", eventDate.toISOString());
-    console.log("Today's Date:", today.toISOString());
+    today.setHours(0, 0, 0, 0);
 
     if (eventDate < today) {
       toast.error("You cannot participate in past events", {
@@ -87,6 +96,7 @@ const Index = () => {
           toast.success("You are Participate Successfully", {
             autoClose: 1000,
           });
+          refetch();
           navigate(-1);
         } else {
           toast.error(participateError?.message, {
@@ -129,6 +139,7 @@ const Index = () => {
       ...base,
       cursor: "pointer",
       backgroundColor: state.isFocused ? "#f3f2f0" : "",
+      color: state.isFocused ? "#2d3748" : "",
       "&:hover": {
         backgroundColor: "#f3f2f0",
       },
@@ -182,7 +193,7 @@ const Index = () => {
             </Label>
             <div className="mt-1 p-3 w-full bg-gray-100 rounded-lg border border-gray-300">
               {fetchData?.eventdate
-                ? moment(fetchData?.eventdate).format("Do MMMM YYYY")
+                ? moment(parseInt(fetchData?.eventdate)).format("DD MMMM YYYY")
                 : "N/A"}
             </div>
           </div>

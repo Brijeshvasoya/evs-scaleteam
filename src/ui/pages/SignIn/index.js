@@ -44,7 +44,6 @@ const Index = () => {
         },
       })
         .then(async ({ data }) => {
-          console.log(data);
           if (rememberMe) {
             const userEmail = data?.signInUser?.user?.email;
             setCookie("remember", JSON.stringify(userEmail));

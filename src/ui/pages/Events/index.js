@@ -1,18 +1,23 @@
 import React from "react";
+import { useQuery } from "@apollo/client";
 import moment from "moment";
 import CardComponent from "../../components/Card";
-import { useQuery } from "@apollo/client";
 import { GET_ALL_EVENTS } from "../Dashboard/query";
-import { Spinner } from "reactstrap";
+import Spinner from "../../components/Spinner";
 
-const Index = () => {
+const EventsPage = () => {
   const { loading, error, data } = useQuery(GET_ALL_EVENTS);
   const eventData = data?.events;
   const filterEvent = eventData?.filter((item) => {
-    const eventDate = moment(item?.eventdate, "DD MMM YYYY");
+    const eventDate = moment(parseInt(item?.eventdate));
     const today = moment();
     return eventDate.isSameOrAfter(today, "day");
   });
+
+  const formatEvent = filterEvent?.map((event) => ({
+    ...event,
+    eventdate: moment(parseInt(event.eventdate)).format("Do MMMM YYYY"),
+  }));
 
   return (
     <div className="flex  py-8  flex-wrap justify-start gap-8 px-8">
@@ -21,8 +26,8 @@ const Index = () => {
           <Spinner size={75} color="#ffffff" />
         </div>
       )}
-      {filterEvent?.length ? (
-        filterEvent.map((item, index) => (
+      {formatEvent?.length ? (
+        formatEvent.map((item, index) => (
           <CardComponent item={item} key={index} />
         ))
       ) : (
@@ -32,4 +37,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default EventsPage;

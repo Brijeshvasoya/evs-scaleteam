@@ -16,12 +16,16 @@ const Table = ({ columns, data, editData, deleteData, viewData }) => {
     headCells: {
       style: {
         minHeight: "40px",
-        backgroundColor: "#f3f2f7",
+        backgroundColor: "#2d3748",
+        color: "#ffffff",
       },
     },
     table: {
       style: {
+        borderTopLeftRadius: "8px",
+        borderTopRightRadius: "8px",
         backgroundColor: "transparent",
+        overflow: "hidden",
       },
     },
     cells: {

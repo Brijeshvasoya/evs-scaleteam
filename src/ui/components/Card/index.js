@@ -27,9 +27,7 @@ const CardComponent = ({ item }) => {
           <div>
             <div className="text-sm text-gray-700">
               <span>
-                {item?.eventdate
-                  ? moment(item?.eventdate).format("Do MMMM YYYY")
-                  : "N/A"}
+              {item?.eventdate}
               </span>
             </div>
           </div>

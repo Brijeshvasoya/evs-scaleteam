@@ -8,7 +8,6 @@ import logo from '../../../assets/images/logo/evslogo.png'
 const Index = () => {
   const navigate = useNavigate();  
   const location = useLocation();
-  console.log(location)
   
   return (
     <div>

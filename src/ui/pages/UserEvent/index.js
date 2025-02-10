@@ -1,15 +1,17 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Input } from "reactstrap";
 import Select from "react-select";
-import { useSelector } from "react-redux";
+import { useQuery } from "@apollo/client";
+import { GET_USER_EVENT } from "./query";
+import moment from "moment";
+import {convertDate} from "../../../Utils/convertDate";
 import Table from "../../components/Table";
 import { userParticipateEventTable } from "../../components/Constant";
 import CardModal from "../../components/Modal/CardModal";
 import UserEvent from "../../components/UserEventCard"
 
 const Index = () => {
-  const { participate } = useSelector((state) => state.user);
-  const { userData } = useSelector((state) => state.user);
+  const {loading,errr,data:participate} = useQuery(GET_USER_EVENT);
   const [options, setOptions] = useState();
   const [sort, setSort] = useState("fname");
   const [data, setData] = useState();
@@ -18,40 +20,50 @@ const Index = () => {
   const [view,setView]=useState(false);
 
   useEffect(() => {
-    const user = userData?.filter((row) => row?.role !== "admin");
-    if (user) {
-      const eventOption = user.map((user) => ({
-        value: user.fname,
-        label: `${user.fname} ${user.lname}`,
+    if (participate) {
+      const newData = participate?.participates.map(item => ({
+        ...item,
+        eventId: {
+          ...item.eventId,
+          eventdate: moment(parseInt(item.eventId?.eventdate)).format("Do MMMM YYYY")
+        }
       }));
+      setData(newData);
+      setSortData(newData);  
+
+      const uniqueUsers = new Set();
+      const eventOption = participate?.participates.reduce((acc, item) => {
+        const { userId } = item;
+        if (userId && !uniqueUsers.has(userId._id)) {
+          uniqueUsers.add(userId._id);
+          acc.push({
+            value: userId._id,  
+            label: `${userId.fname} ${userId.lname}`,
+          });
+        }
+        return acc;
+      }, []);
       setOptions([{ value: "All", label: "All" }, ...eventOption]);
     }
-  }, [userData]);
-
-  useEffect(() => {
-    const updatedData = participate?.flatMap((row) =>
-      row?.event?.map((event) => ({
-        fname: row?.fname,
-        lname: row?.lname,
-        ename: event?.ename,
-        eventdate: event?.eventdate,
-        hname: event?.hname,
-        hno: event?.hno,
-        address: event?.address,
-        tickettype: event?.tickettype,
-        ticketQuantity: event?.ticketQuantity,
-        totalamount: event?.totalamount,
-      }))
-    );
-    setData(updatedData);
-    setSortData(updatedData);
   }, [participate]);
 
   const handleChange = (e) => {
+    const searchTerm = e.target.value?.toLowerCase().trim();
+    if (!searchTerm) {
+      setData(sortData);
+      return;
+    }
     const newData = sortData?.filter((row) => {
-      return row["ename"]
-        ?.toLowerCase()
-        .includes(e.target.value?.toLowerCase());
+      const searchFields = [
+        row?.ename?.toLowerCase(),
+        row?.eventId?.hname?.toLowerCase(),
+        row?.userId?.fname?.toLowerCase(),
+        row?.userId?.lname?.toLowerCase(),
+        row?.eventId?.address?.toLowerCase()
+      ];
+      return searchFields.some(field => 
+        field && field.includes(searchTerm)
+      );
     });
     setData(newData);
   };
@@ -60,7 +72,7 @@ const Index = () => {
       setData(sortData);
     } else {
       const newData = sortData?.filter((row) => {
-        return row["fname"]?.toLowerCase().includes(e?.value?.toLowerCase());
+        return row.userId._id === e.value;
       });
       setData(newData);
     }
@@ -85,6 +97,7 @@ const Index = () => {
       ...base,
       cursor: "pointer",
       backgroundColor: state.isFocused ? "#f3f2f0" : "",
+      color: state.isFocused ? "#2d3748" : "",
       "&:hover": {
         backgroundColor: "#f3f2f0",
       },

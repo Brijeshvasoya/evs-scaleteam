@@ -8,7 +8,6 @@ import CardModal from "../../components/Modal/CardModal";
 import Card from "../../components/Card";
 import Ticket from "../../components/Ticket";
 import { useQuery } from "@apollo/client";
-import { convertDate } from "../../../Utils/convertDate";
 import { GET_ALL_EVENTS, GET_PARTICIPANTS } from "../Dashboard/query";
 
 const Index = () => {
@@ -32,9 +31,17 @@ const Index = () => {
   const [option, setOption] = useState(eventTable);
   const [ticket, setTicket] = useState(false);
   const [showTicket, setShowTicket] = useState(false);
+
+  const formatEvents = (events) => {
+    return events.map((event) => ({
+      ...event,
+      eventdate: moment(parseInt(event.eventdate)).format("Do MMMM YYYY"),
+    }));
+  };
+
   useEffect(() => {
     if (role !== "admin" && getEvents?.events) {
-      const events = convertDate(getEvents.events);
+      const events = formatEvents(getEvents.events);
       setData(events);
     }
   }, [getEvents?.events, role]);
@@ -59,36 +66,37 @@ const Index = () => {
     setView(true);
   };
   const allEvent = () => {
-    const events = convertDate(getEvents.events);
+    const events = formatEvents(getEvents.events);
     setData(events);
     setOption(eventTable);
     setShowTicket(false);
   };
   const participatedEvent = () => {
-    if (!getParticipants?.participate) {
+    if (!getParticipants?.participate || getParticipants.participate.length === 0) {
       setData([]);
       setOption(participateEventTable);
       setShowTicket(true);
       return;
     }
-    const eventId = getParticipants.participate[0]?.eventId;
-    const convertedEvents = convertDate(eventId);
-    const filterEvents = getParticipants.participate.map((item) => ({
+    const eventId = getParticipants?.participate[0]?.eventId;
+    const convertedEvents = eventId && eventId.eventdate
+      ? formatEvents([eventId])
+      : [];
+    const filterEvents = getParticipants?.participate.map((item) => ({
       ...item,
       eventId: convertedEvents[0] || null,
-    }));
-
+    })).filter(event => event.eventId !== null);
     setData(filterEvents);
     setOption(participateEventTable);
     setShowTicket(true);
   };
   const upComingEvent = () => {
     const filterEvent = getEvents?.events.filter((item) => {
-      const eventDate = moment(item?.eventdate, "DD MMM YYYY");
+      const eventDate = moment(parseInt(item.eventdate));
       const today = moment();
       return eventDate.isSameOrAfter(today, "day");
     });
-    const filterEvents = convertDate(filterEvent);
+    const filterEvents = formatEvents(filterEvent);
     setData(filterEvents);
     setOption(eventTable);
     setShowTicket(false);

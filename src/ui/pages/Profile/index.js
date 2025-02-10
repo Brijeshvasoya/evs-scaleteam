@@ -12,6 +12,7 @@ import Spinner from "../../components/Spinner";
 import DatePicker from "../../components/DatePicker";
 import dummyImg from "../../../assets/images/avatars/avatar-blank.png";
 import { UPDATE_PROFILE } from "./mutation";
+import { DELETE_USER } from "../User/mutation";
 
 const Index = () => {
   const {
@@ -24,6 +25,13 @@ const Index = () => {
     context: {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    },
+  });
+  const [deleteUser,{loading:deleteLoading}] = useMutation(DELETE_USER,{
+    context: {
+      headers: {
+        authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     },
   });
@@ -142,12 +150,16 @@ const Index = () => {
           "ok",
           false
         ).then(() => {
-          const newDetail = { ...activeUser, isDeleted: true };
-          dispatch({ type: "EDIT_USER", payload: { data: newDetail } });
-          localStorage.removeItem("active_user");
-          removeCookie("remember");
-          toast.error("Your Profile is Deleted", { autoClose: 2000 });
-          navigate("/");
+          deleteUser({
+            variables: { deleteUserId: activeUser?._id },
+          }).then(() => {
+            toast.success("Your Profile is Deleted", { autoClose: 2000 });
+            localStorage.clear();
+            removeCookie("remember");
+            navigate("/");
+          }).catch((err) => {
+            toast.error(err?.message || "Failed to delete user");
+          });
         });
       } else {
         toast.error("Your Profile is not deleted");

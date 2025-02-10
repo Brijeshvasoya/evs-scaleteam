@@ -41,7 +41,6 @@ const [signUp, { loading }] = useMutation(SIGN_UP);
 
   const onSubmit = (data, e) => {
     e.preventDefault();
-    console.log(typeof(data.age))
     data.email = data.email.toLowerCase().trim();
     data.password = data.password.trim();
 

@@ -97,6 +97,7 @@ const Index = () => {
       ...base,
       cursor: "pointer",
       backgroundColor: state.isFocused ? "#f3f2f0" : "",
+      color: state.isFocused ? "#2d3748" : "",
       "&:hover": {
         backgroundColor: "#f3f2f0",
       },
@@ -106,9 +107,6 @@ const Index = () => {
   const options = [
     { value: "ename", label: "Event Name" },
     { value: "hname", label: "Host Name" },
-    { value: "vipticket", label: "VIP Ticket" },
-    { value: "vvipticket", label: "VVIP Ticket" },
-    { value: "goldticket", label: "Gold Ticket" },
   ];
 
   if (loading || deleteloading) {
@@ -123,14 +121,6 @@ const Index = () => {
     return (
       <div className="flex justify-center items-center h-full min-h-[500px] text-red-500">
         Error loading events: {error.message}
-      </div>
-    );
-  }
-
-  if (!eventData?.events || eventData.events.length === 0) {
-    return (
-      <div className="flex justify-center items-center h-full min-h-[500px] text-gray-500">
-        No events found
       </div>
     );
   }

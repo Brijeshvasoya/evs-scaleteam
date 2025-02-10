@@ -12,7 +12,9 @@ const index = ({ item, toggleModal }) => {
           <div className="flex items-center space-x-4">
             <div className="">
               <div className="text-sm text-gray-700">
-                <span>{item?.fname} {item?.lname}</span>
+                <span>
+                  {item?.userId?.fname} {item?.userId?.lname}
+                </span>
               </div>
             </div>
           </div>
@@ -22,32 +24,32 @@ const index = ({ item, toggleModal }) => {
           <div className="flex items-center space-x-4">
             <div className="w-1/2">
               <div className="text-sm text-gray-700">
-                <span>{item?.ename}</span>
+                <span>{item?.eventId?.ename}</span>
               </div>
             </div>
             <div className="w-1/2">
               <div className="text-sm text-gray-700">
-                <span>{item?.hname}</span>
+                <span>{item?.eventId?.hname}</span>
               </div>
             </div>
           </div>
           <div>
             <div className="text-sm text-gray-700">
               <span>
-                {item?.eventdate
-                  ? moment(item?.eventdate).format("Do MMMM YYYY")
+                {item?.eventId?.eventdate
+                  ? moment(parseInt(item?.eventId?.eventdate)).format("Do MMMM YYYY")
                   : "N/A"}
               </span>
             </div>
           </div>
           <div>
             <div className="text-sm text-gray-700">
-              <span>{item?.hno}</span>
+              <span>{item?.eventId?.hno}</span>
             </div>
           </div>
           <div>
             <div className="text-sm text-gray-700">
-              <span>{item?.address}</span>
+              <span>{item?.eventId?.address}</span>
             </div>
           </div>
           <div className="text-xl font-bold  text-center text-gray-800 mt-6">
@@ -57,7 +59,7 @@ const index = ({ item, toggleModal }) => {
             <div className="w-1/3">
               <div className="text-sm text-gray-700">
                 <span className="font-bold">Ticket Type: </span>
-                <span>{item?.tickettype}</span>
+                <span>{item?.ticketType}</span>
               </div>
             </div>
             <div className="w-1/3">
