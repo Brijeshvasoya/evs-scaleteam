@@ -4,32 +4,34 @@ import Select from "react-select";
 import { useQuery } from "@apollo/client";
 import { GET_USER_EVENT } from "./query";
 import moment from "moment";
-import {convertDate} from "../../../Utils/convertDate";
+import Spinner from "../../components/Spinner";
 import Table from "../../components/Table";
 import { userParticipateEventTable } from "../../components/Constant";
 import CardModal from "../../components/Modal/CardModal";
-import UserEvent from "../../components/UserEventCard"
+import UserEvent from "../../components/UserEventCard";
 
 const Index = () => {
-  const {loading,errr,data:participate} = useQuery(GET_USER_EVENT);
+  const { loading, data: participate } = useQuery(GET_USER_EVENT);
   const [options, setOptions] = useState();
   const [sort, setSort] = useState("fname");
   const [data, setData] = useState();
   const [sortData, setSortData] = useState();
   const [viewUserEvent, setViewUserEvent] = useState();
-  const [view,setView]=useState(false);
+  const [view, setView] = useState(false);
 
   useEffect(() => {
     if (participate) {
-      const newData = participate?.participates.map(item => ({
+      const newData = participate?.participates.map((item) => ({
         ...item,
         eventId: {
           ...item.eventId,
-          eventdate: moment(parseInt(item.eventId?.eventdate)).format("Do MMMM YYYY")
-        }
+          eventdate: moment(parseInt(item.eventId?.eventdate)).format(
+            "Do MMMM YYYY"
+          ),
+        },
       }));
       setData(newData);
-      setSortData(newData);  
+      setSortData(newData);
 
       const uniqueUsers = new Set();
       const eventOption = participate?.participates.reduce((acc, item) => {
@@ -37,7 +39,7 @@ const Index = () => {
         if (userId && !uniqueUsers.has(userId._id)) {
           uniqueUsers.add(userId._id);
           acc.push({
-            value: userId._id,  
+            value: userId._id,
             label: `${userId.fname} ${userId.lname}`,
           });
         }
@@ -59,11 +61,9 @@ const Index = () => {
         row?.eventId?.hname?.toLowerCase(),
         row?.userId?.fname?.toLowerCase(),
         row?.userId?.lname?.toLowerCase(),
-        row?.eventId?.address?.toLowerCase()
+        row?.eventId?.address?.toLowerCase(),
       ];
-      return searchFields.some(field => 
-        field && field.includes(searchTerm)
-      );
+      return searchFields.some((field) => field && field.includes(searchTerm));
     });
     setData(newData);
   };
@@ -77,10 +77,10 @@ const Index = () => {
       setData(newData);
     }
     setSort(e?.value);
-  };;
-  const toggleModal =()=>{
+  };
+  const toggleModal = () => {
     setView(false);
-  }
+  };
   const viewData = (row) => {
     setViewUserEvent(row);
     setView(true);
@@ -103,6 +103,14 @@ const Index = () => {
       },
     }),
   };
+
+  if (loading) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <Spinner size={75} color="#ffffff" />
+      </div>
+    );
+  }
   return (
     <Fragment>
       <div className="flex justify-between mt-4 space-x-4">

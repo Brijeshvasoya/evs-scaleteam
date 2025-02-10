@@ -33,7 +33,7 @@ const Index = () => {
       const events = convertDate(eventData.events);
       setData(events);
     }
-  }, [eventData]);
+  }, [eventData,refetch]);
 
   const toggleModal = () => {
     setModalOpen(!modalOpen);

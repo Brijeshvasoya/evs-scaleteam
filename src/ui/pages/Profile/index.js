@@ -63,7 +63,7 @@ const Index = () => {
       setValue("dob", parsedDob);
       setValue("age", activeUser?.age);
     }
-  }, [activeUser]);
+  }, [activeUser,setValue]);
 
   useEffect(() => {
     if (base64Url) {

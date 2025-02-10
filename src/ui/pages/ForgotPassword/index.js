@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Button, Form, Input, Label, FormText } from "reactstrap";
 import InputPasswordToggle from "../../components/input-password-toggle";
@@ -6,7 +6,6 @@ import logo from "../../../logo.png";
 import source from "../../../assets/images/pages/forgot-password.avif";
 import { Link, useNavigate } from "react-router-dom";
 import { ChevronLeft } from "react-feather";
-import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useMutation } from "@apollo/client";
 import { FORGOT_PASSWORD } from "./mutation";
@@ -14,9 +13,6 @@ import Spinner from "../../components/Spinner";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { userData } = useSelector((state) => state?.user);
-  // const [loading, setLoading] = useState(false);
   const [forgotPassword, { loading }] = useMutation(FORGOT_PASSWORD);
 
   const {

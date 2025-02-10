@@ -3,6 +3,7 @@ import { Button } from "reactstrap";
 import Table from "../../components/Table";
 import { useSelector } from "react-redux";
 import moment from "moment";
+import Spinner from "../../components/Spinner";
 import { eventTable, participateEventTable } from "../../components/Constant";
 import CardModal from "../../components/Modal/CardModal";
 import Card from "../../components/Card";
@@ -12,7 +13,7 @@ import { GET_ALL_EVENTS, GET_PARTICIPANTS } from "../Dashboard/query";
 
 const Index = () => {
   const { activeUser } = useSelector((state) => state.user);
-  const { data: getEvents, loading, error } = useQuery(GET_ALL_EVENTS);
+  const { data: getEvents, loading } = useQuery(GET_ALL_EVENTS);
   const { data: getParticipants } = useQuery(
     GET_PARTICIPANTS,
     { variables: { userId: activeUser?._id } },
@@ -72,20 +73,24 @@ const Index = () => {
     setShowTicket(false);
   };
   const participatedEvent = () => {
-    if (!getParticipants?.participate || getParticipants.participate.length === 0) {
+    if (
+      !getParticipants?.participate ||
+      getParticipants.participate.length === 0
+    ) {
       setData([]);
       setOption(participateEventTable);
       setShowTicket(true);
       return;
     }
     const eventId = getParticipants?.participate[0]?.eventId;
-    const convertedEvents = eventId && eventId.eventdate
-      ? formatEvents([eventId])
-      : [];
-    const filterEvents = getParticipants?.participate.map((item) => ({
-      ...item,
-      eventId: convertedEvents[0] || null,
-    })).filter(event => event.eventId !== null);
+    const convertedEvents =
+      eventId && eventId.eventdate ? formatEvents([eventId]) : [];
+    const filterEvents = getParticipants?.participate
+      .map((item) => ({
+        ...item,
+        eventId: convertedEvents[0] || null,
+      }))
+      .filter((event) => event.eventId !== null);
     setData(filterEvents);
     setOption(participateEventTable);
     setShowTicket(true);
@@ -101,7 +106,13 @@ const Index = () => {
     setOption(eventTable);
     setShowTicket(false);
   };
-
+  if (loading) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <Spinner size={75} color="#ffffff" />
+      </div>
+    );
+  }
   return (
     <Fragment>
       <div className="flex justify-between mt-4 space-x-4">

@@ -6,7 +6,7 @@ import { GET_ALL_EVENTS } from "../Dashboard/query";
 import Spinner from "../../components/Spinner";
 
 const EventsPage = () => {
-  const { loading, error, data } = useQuery(GET_ALL_EVENTS);
+  const { loading, data } = useQuery(GET_ALL_EVENTS);
   const eventData = data?.events;
   const filterEvent = eventData?.filter((item) => {
     const eventDate = moment(parseInt(item?.eventdate));

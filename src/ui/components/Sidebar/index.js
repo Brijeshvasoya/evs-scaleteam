@@ -34,7 +34,7 @@ const Index = () => {
             <Link
               to={role!=="admin"?"/dashboard":"/admin-dashboard"}
               className={`block px-6 py-2 text-lg text-white rounded transition-all focus:ring-2 ${
-                location.pathname === "/dashboard"
+                location.pathname === (role!=="admin"?"/dashboard":"/admin-dashboard")
                   ? "bg-gray-500"
                   : "hover:bg-gray-700"
               }`}
