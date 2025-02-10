@@ -1,16 +1,18 @@
+import moment from "moment";
+
 export const convertDate = (date) => {
     if (!date) return [];
     if (date.eventdate) {
       return [{
         ...date,
-        eventdate: parseInt(date.eventdate), // Keep as timestamp
+        eventdate: moment(parseInt(date.eventdate)).format("DD MMM YYYY"),
       }];
     }
     if (Array.isArray(date)) {
       return date.map((event) => ({
         ...event,
         eventdate: event.eventdate
-          ? parseInt(event.eventdate) // Keep as timestamp
+          ? moment(parseInt(event.eventdate)).format("DD MMM YYYY")
           : null,
       }));
     }
@@ -20,7 +22,7 @@ export const convertDate = (date) => {
         return arrayProperty.map((event) => ({
           ...event,
           eventdate: event.eventdate
-            ? parseInt(event.eventdate) // Keep as timestamp
+            ? moment(parseInt(event.eventdate)).format("DD MMM YYYY")
             : null,
         }));
       }

@@ -36,7 +36,7 @@ const Index = () => {
   const formatEvents = (events) => {
     return events.map((event) => ({
       ...event,
-      eventdate: moment(parseInt(event.eventdate)).format("Do MMMM YYYY"),
+      eventdate: moment(parseInt(event.eventdate)).format("DD MMM YYYY"),
     }));
   };
 

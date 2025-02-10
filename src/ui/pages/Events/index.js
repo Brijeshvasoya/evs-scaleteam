@@ -16,7 +16,7 @@ const EventsPage = () => {
 
   const formatEvent = filterEvent?.map((event) => ({
     ...event,
-    eventdate: moment(parseInt(event.eventdate)).format("Do MMMM YYYY"),
+    eventdate: moment(parseInt(event.eventdate)).format("DD MMM YYYY"),
   }));
 
   return (

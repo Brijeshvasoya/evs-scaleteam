@@ -11,6 +11,7 @@ const PublicRoute = (props) => {
   const activeUser = JSON.parse(localStorage.getItem("active_user"));
   const role = activeUser?.role;
   const token = localStorage.getItem("token");
+
   useEffect(() => {
     if (token) {
       if (role !== "admin") {
@@ -18,9 +19,12 @@ const PublicRoute = (props) => {
       } else {
         navigate("/admin-dashboard");
       }
+      return;
     }
   }, [token, navigate, role]);
-
+  if (token) {
+    return null;
+  }
   return <Component />;
 };
 

@@ -37,6 +37,9 @@ const Index = () => {
 
   const toggleModal = () => {
     setModalOpen(!modalOpen);
+    if (modalOpen) {
+      setEditEvent(null);
+    }
   };
 
   const handleSortChange = (selectedOption) => {

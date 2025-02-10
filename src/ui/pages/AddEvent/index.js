@@ -1,13 +1,13 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import moment from "moment";
+import { Form, Label, Input, Button, FormText } from "reactstrap";
 import { useMutation, useQuery } from "@apollo/client";
 import { ADD_EVENT, EDIT_EVENT } from "./mutation";
 import { GET_ALL_EVENTS } from "../Dashboard/query";
 import DatePicker from "../../components/DatePicker";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
-import { Form, Label, Input, Button, FormText } from "reactstrap";
+import Spinner from "../../components/Spinner";
 
 const Index = ({ toggleModal, editEvent, setEditEvent }) => {
   const [createEvent, { loading }] = useMutation(ADD_EVENT);
@@ -19,7 +19,6 @@ const Index = ({ toggleModal, editEvent, setEditEvent }) => {
       },
     },
   });
-  const dispatch = useDispatch();
   const [edit, setEdit] = useState();
 
   const {
@@ -27,6 +26,7 @@ const Index = ({ toggleModal, editEvent, setEditEvent }) => {
     handleSubmit,
     formState: { errors },
     setValue,
+    reset,
   } = useForm();
 
   useEffect(() => {
@@ -34,25 +34,28 @@ const Index = ({ toggleModal, editEvent, setEditEvent }) => {
       setEdit(editEvent);
       setValue("ename", editEvent.ename);
       setValue("hname", editEvent.hname);
-      setValue("eventdate", moment(editEvent.eventdate).toDate());
+      const eventDate = moment(editEvent.eventdate, "DD MMM YYYY").toDate();
+      setValue("eventdate", eventDate);
       setValue("hno", editEvent.hno);
       setValue("address", editEvent.address);
       setValue("vipticket", editEvent.vipticket);
       setValue("vvipticket", editEvent.vvipticket);
       setValue("goldticket", editEvent.goldticket);
+    } else {
+      setEdit(null);
+      reset();
     }
-  }, [editEvent, setValue]);
+  }, [editEvent, reset, setValue]);
 
   const onSubmit = (data, e) => {
     e.preventDefault();
     data.eventdate = moment(data.eventdate).format("DD MMM YYYY");
-
     if (!editEvent) {
       if (data) {
         createEvent({ variables: { eventNew: data } })
           .then(() => {
             refetch();
-            toast.success("Your Event Successfully Add", { autoClose: 1000 });
+            toast.success("Your Event Successfully Added", { autoClose: 1000 });
           })
           .catch((error) => {
             toast.error(error?.message, { autoClose: 2000 });
@@ -65,7 +68,7 @@ const Index = ({ toggleModal, editEvent, setEditEvent }) => {
       if (data) {
         EditEvent({ variables: { eventId: editEvent._id, eventUpdate: data } })
           .then(() => {
-            toast.success("Event Edit Successfully", { autoClose: 1000 });
+            toast.success("Event Edited Successfully", { autoClose: 1000 });
             setEdit(null);
             setEditEvent(null);
           })
@@ -80,6 +83,13 @@ const Index = ({ toggleModal, editEvent, setEditEvent }) => {
     toggleModal();
   };
 
+  if(loading || editLoading){
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <Spinner size={75} color="#ffffff" />
+      </div>
+    );
+  }
   return (
     <div className="flex w-full min-h-[500px] bg-white rounded-lg overflow-hidden shadow-xl">
       <div className="w-1/3 bg-slate-800 text-white p-8 flex flex-col justify-center items-center space-y-4 relative">
@@ -182,7 +192,7 @@ const Index = ({ toggleModal, editEvent, setEditEvent }) => {
                   placeholder="Enter Event Date"
                   className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-300"
                   value={
-                    edit?.eventdate ? moment(edit?.eventdate).toDate() : value
+                    value || (edit?.eventdate ? moment(edit.eventdate, "DD MMM YYYY").toDate() : null)
                   }
                 />
               )}

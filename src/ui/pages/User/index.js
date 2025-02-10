@@ -3,6 +3,7 @@ import { Input } from "reactstrap";
 import { toast } from "react-toastify";
 import { useQuery,useMutation } from "@apollo/client";
 import { CheckCircle, Lock } from 'react-feather';
+import moment from "moment";
 
 import Table from "../../components/Table";
 import { userTable } from "../../components/Constant";
@@ -53,7 +54,9 @@ const Index = () => {
     );
     const user = filtered.map((user) => ({
       ...user,
-      dob: user.dob ? new Date(parseInt(user.dob)).toLocaleDateString() : "N/A",
+      dob: user.dob
+        ? moment(parseInt(user.dob)).format("DD MMM YYYY")
+        : "N/A",
     }));
     setFilteredUsers(user);
     refetch();

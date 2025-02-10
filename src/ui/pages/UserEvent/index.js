@@ -26,7 +26,7 @@ const Index = () => {
         eventId: {
           ...item.eventId,
           eventdate: moment(parseInt(item.eventId?.eventdate)).format(
-            "Do MMMM YYYY"
+            "DD MMM YYYY"
           ),
         },
       }));
