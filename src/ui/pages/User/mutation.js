@@ -11,3 +11,9 @@ export const VERIFY_USER = gql`
     verifyUser(id: $verifyUserId)
   }
 `;
+
+export const DEACTIVE_USER = gql`
+  mutation DeactiveUser($deactiveUserId: ID!) {
+    deactiveUser(id: $deactiveUserId)
+  }
+`;

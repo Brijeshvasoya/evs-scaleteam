@@ -40,7 +40,7 @@ const Table = ({ columns, data, editData, deleteData, viewData }) => {
     selector: (row) => row.actions,
     cell: (row) => (
       <div className="flex space-x-3 justify-center">
-        {editData ? (
+        {editData && (!row.isDeleted) ? (
           <button
             onClick={() => editData(row)}
             className="text-blue-500 hover:text-blue-700"
@@ -48,7 +48,7 @@ const Table = ({ columns, data, editData, deleteData, viewData }) => {
             <Edit size={16} />
           </button>
         ) : null}
-        {deleteData ? (
+        {deleteData && (!row.isDeleted) ? (
           <button
             onClick={() => deleteData(row)}
             className="text-red-500 hover:text-red-700"
