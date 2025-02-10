@@ -111,8 +111,8 @@ const Index = () => {
 
   if (loading || deleteloading) {
     return (
-      <div className="flex justify-center items-center h-full min-h-[500px]">
-        <Spinner />
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <Spinner size={75} color="#ffffff" />
       </div>
     );
   }

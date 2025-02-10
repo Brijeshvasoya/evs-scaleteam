@@ -17,7 +17,7 @@ const ForgotPassword = () => {
   const dispatch = useDispatch();
   const { userData } = useSelector((state) => state?.user);
   // const [loading, setLoading] = useState(false);
-  const [forgotPassword,{loading}] = useMutation(FORGOT_PASSWORD);
+  const [forgotPassword, { loading }] = useMutation(FORGOT_PASSWORD);
 
   const {
     control,
@@ -31,26 +31,28 @@ const ForgotPassword = () => {
 
   const password = watch("password");
 
-  const onSubmit = (data,e) => {
-    e.preventDefault()
-    if(data?.email&&data?.password){
+  const onSubmit = (data, e) => {
+    e.preventDefault();
+    if (data?.email && data?.password) {
       forgotPassword({
         variables: {
-          userData: { email: data?.email.trim(),password:data?.password },
+          userData: { email: data?.email.trim(), password: data?.password },
         },
       })
-      .then(({ data }) => {
-        if (data?.forgotPassword) {
-          toast.success("Password reset email sent", { autoClose: 1000 });
-          navigate("/");
-        } else {
-          toast.error("Email not found. Please try again.",{autoClose:2000});
-        }
-      })
-      .catch((error) => {
-        toast.error(error?.message, { autoClose: 2000 });
-      });
-    }else{
+        .then(({ data }) => {
+          if (data?.forgotPassword) {
+            toast.success("Password reset email sent", { autoClose: 1000 });
+            navigate("/");
+          } else {
+            toast.error("Email not found. Please try again.", {
+              autoClose: 2000,
+            });
+          }
+        })
+        .catch((error) => {
+          toast.error(error?.message, { autoClose: 2000 });
+        });
+    } else {
       toast.error("Please fill all the fields", { autoClose: 2000 });
     }
     reset();
@@ -58,7 +60,11 @@ const ForgotPassword = () => {
 
   return (
     <div className="flex h-screen container">
-      {loading && <Spinner />}
+      {loading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <Spinner size={75} color="#ffffff" />
+        </div>
+      )}
       <div className="w-1/2 flex flex-col justify-start items-start p-8">
         <img
           src={logo}

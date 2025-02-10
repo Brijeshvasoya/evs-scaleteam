@@ -28,7 +28,7 @@ const Index = () => {
       },
     },
   });
-  const [deleteUser,{loading:deleteLoading}] = useMutation(DELETE_USER,{
+  const [deleteUser, { loading: deleteLoading }] = useMutation(DELETE_USER, {
     context: {
       headers: {
         authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -44,8 +44,7 @@ const Index = () => {
   const [, removeCookie] = useCookies();
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("active_user");
-    const localProfilePicture = storedUser ? JSON.parse(storedUser).profilePicture : null;
+    const localProfilePicture = activeUser ? activeUser.profilePicture : null;
     if (localProfilePicture) {
       setProfilePicture(localProfilePicture);
       setCancel(true);
@@ -122,6 +121,7 @@ const Index = () => {
         toast.error(error?.message, { autoClose: 2000 });
       });
   };
+
   const removeImg = () => {
     const updatedUser = { ...activeUser, profilePicture: null };
     localStorage.setItem("active_user", JSON.stringify(updatedUser));
@@ -129,11 +129,17 @@ const Index = () => {
     setBase64Url(null);
     setProfilePicture(null);
     setCancel(false);
+    const fileInput = document.getElementById("upload-image");
+    if (fileInput) {
+      fileInput.value = "";
+    }
     toast.success("Your Profile Photo is Removed", { autoClose: 1000 });
   };
+
   const handleCancel = () => {
     navigate(-1);
   };
+
   const handleDeleteAccount = () => {
     ConfirmationModal(
       "warning",
@@ -152,20 +158,31 @@ const Index = () => {
         ).then(() => {
           deleteUser({
             variables: { deleteUserId: activeUser?._id },
-          }).then(() => {
-            toast.success("Your Profile is Deleted", { autoClose: 2000 });
-            localStorage.clear();
-            removeCookie("remember");
-            navigate("/");
-          }).catch((err) => {
-            toast.error(err?.message || "Failed to delete user");
-          });
+          })
+            .then(() => {
+              toast.success("Your Profile is Deleted", { autoClose: 2000 });
+              localStorage.clear();
+              removeCookie("remember");
+              navigate("/");
+            })
+            .catch((err) => {
+              toast.error(err?.message || "Failed to delete user");
+            });
         });
       } else {
         toast.error("Your Profile is not deleted");
       }
     });
   };
+
+  if (loading || deleteLoading) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <Spinner size={75} color="#ffffff" />
+      </div>
+    );
+  }
+
   return (
     <div className="w-full max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-6">
@@ -173,9 +190,9 @@ const Index = () => {
           <div>
             <img
               src={
-                base64Url || 
-                profilePicture || 
-                activeUser?.profilePicture || 
+                base64Url ||
+                profilePicture ||
+                activeUser?.profilePicture ||
                 dummyImg
               }
               alt="Profile"
@@ -349,14 +366,16 @@ const Index = () => {
             </div>
           </div>
           <div className="flex mt-6 justify-end space-x-3">
-            <Button
-              type="button"
-              color="secondary"
-              onClick={handleDeleteAccount}
-              className="w-32 py-2 text-white font-medium rounded-lg bg-red-600 hover:bg-red-500"
-            >
-              Delete Account
-            </Button>
+            {activeUser?.role !== "admin" && (
+              <Button
+                type="button"
+                color="secondary"
+                onClick={handleDeleteAccount}
+                className="w-32 py-2 text-white font-medium rounded-lg bg-red-600 hover:bg-red-500"
+              >
+                Delete Account
+              </Button>
+            )}
             <Button
               type="button"
               color="secondary"

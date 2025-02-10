@@ -10,24 +10,27 @@ import { GET_EVENT } from "./query.js";
 import { PARTICIPATE } from "./mutation";
 import Spinner from "../../components/Spinner";
 import { GET_PARTICIPANTS } from "../Dashboard/query";
-  
 
 const Index = () => {
   const { id } = useParams();
-  const { data, loading: eventLoading, error: eventError } = useQuery(GET_EVENT, { variables: { id } });
+  const {
+    data,
+    loading: eventLoading,
+    error: eventError,
+  } = useQuery(GET_EVENT, { variables: { id } });
   const token = localStorage.getItem("token");
   const { activeUser } = useSelector((state) => state.user);
 
-  const [ParticipateEvent, { loading: participateLoading, error: participateError }] = useMutation(
-    PARTICIPATE,
-    {
-      context: {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+  const [
+    ParticipateEvent,
+    { loading: participateLoading, error: participateError },
+  ] = useMutation(PARTICIPATE, {
+    context: {
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-    }
-  );
+    },
+  });
   const { refetch } = useQuery(
     GET_PARTICIPANTS,
     { variables: { userId: activeUser?._id } },
@@ -86,7 +89,7 @@ const Index = () => {
 
     const input = {
       eventId: fetchData?._id,
-      ticketType: (options).toLowerCase().replace(/\s/g, ""),
+      ticketType: options.toLowerCase().replace(/\s/g, ""),
       ticketQuantity: parseInt(ticketQuantity),
     };
 
@@ -148,15 +151,18 @@ const Index = () => {
 
   if (eventLoading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <Spinner size={75} color="#6366f1" />
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <Spinner size={75} color="#ffffff" />
       </div>
     );
   }
 
   if (eventError) {
     return (
-      <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+      <div
+        className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+        role="alert"
+      >
         <strong className="font-bold">Error: </strong>
         <span className="block sm:inline">{eventError.message}</span>
       </div>

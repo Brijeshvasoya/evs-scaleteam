@@ -10,7 +10,7 @@ const PublicRoute = (props) => {
   const navigate = useNavigate();
   const activeUser = JSON.parse(localStorage.getItem("active_user"));
   const role = activeUser?.role;
-  const token = localStorage.getItem("token")
+  const token = localStorage.getItem("token");
   useEffect(() => {
     if (token) {
       if (role !== "admin") {
@@ -29,7 +29,7 @@ const ProtectRoute = (props) => {
   const navigate = useNavigate();
   const activeUser = JSON.parse(localStorage.getItem("active_user"));
   const role = activeUser?.role;
-  const token = localStorage.getItem("token")
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     if (!token) {
@@ -45,7 +45,13 @@ const ProtectRoute = (props) => {
       <div className="ml-64 w-full">
         <Navbar user={activeUser} />
         <div className="p-8">
-          <Suspense fallback={<Spinner />}>
+          <Suspense
+            fallback={
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                <Spinner size={75} color="#ffffff" />
+              </div>
+            }
+          >
             <Component />
           </Suspense>
         </div>
@@ -58,8 +64,8 @@ const AdminRoute = (props) => {
   const { Component } = props;
   const navigate = useNavigate();
   const activeUser = JSON.parse(localStorage.getItem("active_user"));
-  const role = activeUser?.role; 
-  const token = localStorage.getItem("token")
+  const role = activeUser?.role;
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     if (role !== "admin") {
@@ -73,7 +79,13 @@ const AdminRoute = (props) => {
       <div className="ml-64 w-full">
         <Navbar user={activeUser} />
         <div className="p-8">
-          <Suspense fallback={<Spinner />}>
+          <Suspense
+            fallback={
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                <Spinner size={75} color="#ffffff" />
+              </div>
+            }
+          >
             <Component />
           </Suspense>
         </div>
