@@ -15,6 +15,14 @@ import { UPDATE_PROFILE } from "./mutation";
 import { DELETE_USER } from "../User/mutation";
 
 const Index = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { activeUser } = useSelector((state) => state.user);
+  const [base64Url, setBase64Url] = useState("");
+  const [cancel, setCancel] = useState(false);
+  const [profilePicture, setProfilePicture] = useState(null);
+  const [, removeCookie] = useCookies();
+  
   const {
     control,
     handleSubmit,
@@ -35,13 +43,6 @@ const Index = () => {
       },
     },
   });
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { activeUser } = useSelector((state) => state.user);
-  const [base64Url, setBase64Url] = useState("");
-  const [cancel, setCancel] = useState(false);
-  const [profilePicture, setProfilePicture] = useState(null);
-  const [, removeCookie] = useCookies();
 
   useEffect(() => {
     const localProfilePicture = activeUser ? activeUser.profilePicture : null;
@@ -108,13 +109,11 @@ const Index = () => {
           ...activeUser,
           profilePicture: base64Url || activeUser?.profilePicture,
         };
-        localStorage.setItem("active_user", JSON.stringify(updatedUser));
+        dispatch({
+          type: "LOGIN_USER",
+          payload: { data: updatedUser },
+        });
         setProfilePicture(base64Url || activeUser?.profilePicture);
-        if (activeUser?.role === "admin") {
-          navigate("/admin-dashboard");
-        } else {
-          navigate("/dashboard");
-        }
         toast.success("Your Profile Updated Successfully", { autoClose: 1000 });
       })
       .catch((error) => {
