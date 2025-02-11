@@ -9,9 +9,8 @@ import DatePicker from "../../components/DatePicker";
 import { toast } from "react-toastify";
 import Spinner from "../../components/Spinner";
 
-const Index = ({ toggleModal, editEvent, setEditEvent }) => {
+const Index = ({ toggleModal, editEvent, setEditEvent, refetch }) => {
   const [createEvent, { loading }] = useMutation(ADD_EVENT);
-  const { refetch } = useQuery(GET_ALL_EVENTS);
   const [EditEvent, { loading: editLoading }] = useMutation(EDIT_EVENT, {
     context: {
       headers: {

@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const GET_USER_EVENT = gql`
-  query GetUserEvent {
-    participates {
+  query GetUserEvent($searchTerm: String, $userId: ID) {
+    participates(searchTerm: $searchTerm, userId: $userId) {
       _id
       eventId {
         _id

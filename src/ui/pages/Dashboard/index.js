@@ -82,16 +82,16 @@ const Index = () => {
       setShowTicket(true);
       return;
     }
-    const eventId = getParticipants?.participate[0]?.eventId;
-    const convertedEvents =
-      eventId && eventId.eventdate ? formatEvents([eventId]) : [];
-    const filterEvents = getParticipants?.participate
-      .map((item) => ({
-        ...item,
-        eventId: convertedEvents[0] || null,
-      }))
-      .filter((event) => event.eventId !== null);
-    setData(filterEvents);
+   const filterEvent =  getParticipants?.participate.map((item) => ({
+      ...item,
+      eventId: {
+        ...item.eventId,
+        eventdate: moment(parseInt(item.eventId?.eventdate)).format(
+          "DD MMM YYYY"
+        ),
+      },
+    }));
+    setData(filterEvent);
     setOption(participateEventTable);
     setShowTicket(true);
   };

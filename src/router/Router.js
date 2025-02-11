@@ -1,4 +1,4 @@
-import React, { memo, useEffect, Suspense } from "react";
+import React, { memo, useEffect, Suspense, useState } from "react";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { routes } from "./routes";
 import Navbar from "../ui/components/Navbar";
@@ -14,6 +14,7 @@ const PublicRoute = (props) => {
 
   useEffect(() => {
     if (token) {
+      console.log(token);
       if (role !== "admin") {
         navigate("/dashboard");
       } else {
@@ -43,10 +44,14 @@ const ProtectRoute = (props) => {
     }
   }, [token, navigate, role]);
 
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
   return (
     <div className="flex">
-      <Sidebar />
-      <div className="ml-64 w-full">
+      <Sidebar
+        onCollapseChange={(collapsed) => setIsSidebarCollapsed(collapsed)}
+      />
+      <div className="container w-full transition-all duration-300">
         <Navbar user={activeUser} />
         <div className="p-8">
           <Suspense
@@ -72,15 +77,21 @@ const AdminRoute = (props) => {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    if (role !== "admin") {
+    if (!token) {
+      navigate("/");
+    } else if (role !== "admin") {
       navigate(-1);
     }
   }, [token, navigate, role]);
 
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
   return (
     <div className="flex">
-      <Sidebar />
-      <div className="ml-64 w-full">
+      <Sidebar
+        onCollapseChange={(collapsed) => setIsSidebarCollapsed(collapsed)}
+      />
+      <div className="container w-full transition-all duration-300">
         <Navbar user={activeUser} />
         <div className="p-8">
           <Suspense

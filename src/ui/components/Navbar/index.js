@@ -19,6 +19,6 @@ const Index = (props) => {
       </div>
     </Fragment>
   );
-};
+};  
 
 export default Index;

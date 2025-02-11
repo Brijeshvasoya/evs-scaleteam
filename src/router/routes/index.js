@@ -53,6 +53,11 @@ const routes = [
     element: lazy(() => import('../../ui/pages/UserEvent')),
     layout:'admin'  
   },
+  // {
+  //   path: '/*',
+  //   element: lazy(() => import('../../ui/pages/UserEvent')),
+  //   layout:'admin'  
+  // },
 ];
 
 export {DefaultRoute, routes };

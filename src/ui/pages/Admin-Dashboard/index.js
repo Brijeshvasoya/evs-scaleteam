@@ -14,26 +14,33 @@ import { GET_ALL_EVENTS } from "../Dashboard/query";
 import { DELETE_EVENT } from "../Dashboard/mutation";
 
 const Index = () => {
-  const { loading, error, data: eventData, refetch } = useQuery(GET_ALL_EVENTS);
-  const [DeleteEvent, { loading: deleteloading }] = useMutation(DELETE_EVENT, {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sort, setSort] = useState("ename");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editEvent, setEditEvent] = useState(null);
+  const [data, setData] = useState([]);
+  const[dataloading, setDataloading] = useState(false)
+  const { data: eventData, loading, error, refetch } = useQuery(GET_ALL_EVENTS, {
+    variables: {
+      searchTerm,
+      searchField: sort,
+    },
+  });
+  const [DeleteEvent] = useMutation(DELETE_EVENT, {
     context: {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     },
   });
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editEvent, setEditEvent] = useState(null);
-  const [data, setData] = useState([]);
-  const [sort, setSort] = useState("ename");
 
   useEffect(() => {
-    refetch();
     if (eventData?.events) {
       const events = convertDate(eventData.events);
       setData(events);
+      setDataloading(loading)
     }
-  }, [eventData,refetch]);
+  }, [eventData]);
 
   const toggleModal = () => {
     setModalOpen(!modalOpen);
@@ -47,10 +54,11 @@ const Index = () => {
   };
 
   const handleSearch = (e) => {
-    const filteredData = eventData?.events.filter((event) =>
-      event[sort]?.toLowerCase().includes(e.target.value?.toLowerCase())
-    );
-    setData(filteredData);
+    const term = e.target.value;
+    setSearchTerm(term);
+    if (term) {
+      refetch();
+    }
   };
 
   const editData = (event) => {
@@ -77,8 +85,8 @@ const Index = () => {
           DeleteEvent({
             variables: { eventId: row._id },
           }).then(() => {
-            toast.success("Event deleted successfully");
             refetch();
+            toast.success("Event deleted successfully");
           }).catch((err) => {
             toast.error(err?.message || "Failed to delete event");
           });
@@ -112,7 +120,7 @@ const Index = () => {
     { value: "hname", label: "Host Name" },
   ];
 
-  if (loading || deleteloading) {
+  if (dataloading) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
         <Spinner size={75} color="#ffffff" />
@@ -133,6 +141,7 @@ const Index = () => {
       <div className="flex justify-between mt-4 space-x-4">
         <Input
           type="text"
+          value={searchTerm}
           placeholder="Search Event"
           onChange={handleSearch}
           className="p-3 w-full h-12 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -172,6 +181,7 @@ const Index = () => {
             toggleModal={toggleModal}
             editEvent={editEvent}
             setEditEvent={setEditEvent}
+            refetch={refetch}
           />
         </Modal>
       )}

@@ -11,17 +11,25 @@ import CardModal from "../../components/Modal/CardModal";
 import UserEvent from "../../components/UserEventCard";
 
 const Index = () => {
-  const { loading, data: participate } = useQuery(GET_USER_EVENT);
   const [options, setOptions] = useState();
-  const [sort, setSort] = useState("fname");
+  const [sort, setSort] = useState("All");
   const [data, setData] = useState();
-  const [sortData, setSortData] = useState();
   const [viewUserEvent, setViewUserEvent] = useState();
   const [view, setView] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [dataLoading, setDataLoading] = useState(false);
+
+  const { loading, data: participate } = useQuery(GET_USER_EVENT, {
+    variables: {
+      searchTerm: searchTerm?.trim() || undefined,
+      userId: sort !== "All" ? sort : undefined
+    },
+    fetchPolicy: 'network-only'
+  });
 
   useEffect(() => {
-    if (participate) {
-      const newData = participate?.participates.map((item) => ({
+    if (participate?.participates && participate.participates.length > 0) {
+      const userEventData = participate.participates.map((item) => ({
         ...item,
         eventId: {
           ...item.eventId,
@@ -30,57 +38,45 @@ const Index = () => {
           ),
         },
       }));
-      setData(newData);
-      setSortData(newData);
 
       const uniqueUsers = new Set();
-      const eventOption = participate?.participates.reduce((acc, item) => {
-        const { userId } = item;
-        if (userId && !uniqueUsers.has(userId._id)) {
-          uniqueUsers.add(userId._id);
-          acc.push({
-            value: userId._id,
-            label: `${userId.fname} ${userId.lname}`,
+      const eventOption = participate.participates.reduce((acc, item) => {
+        const userId = item.userId?._id;
+        const userName = `${item.userId?.fname} ${item.userId?.lname}`.trim();
+        
+        if (userId && !uniqueUsers.has(userId)) {
+          uniqueUsers.add(userId);
+          acc.push({ 
+            value: userId, 
+            label: userName 
           });
         }
         return acc;
       }, []);
+      
       setOptions([{ value: "All", label: "All" }, ...eventOption]);
+      setData(userEventData);
+      setDataLoading(loading);
+    } else {
+      setData([]);
+      setOptions([{ value: "All", label: "All" }]);
     }
-  }, [participate]);
+  }, [participate, loading, searchTerm, sort]);
 
   const handleChange = (e) => {
-    const searchTerm = e.target.value?.toLowerCase().trim();
-    if (!searchTerm) {
-      setData(sortData);
-      return;
-    }
-    const newData = sortData?.filter((row) => {
-      const searchFields = [
-        row?.ename?.toLowerCase(),
-        row?.eventId?.hname?.toLowerCase(),
-        row?.userId?.fname?.toLowerCase(),
-        row?.userId?.lname?.toLowerCase(),
-        row?.eventId?.address?.toLowerCase(),
-      ];
-      return searchFields.some((field) => field && field.includes(searchTerm));
-    });
-    setData(newData);
+    const term = e.target.value?.toLowerCase().trim();
+    setSearchTerm(term);
   };
+
   const handleSelectChange = (e) => {
-    if (e.value === "All") {
-      setData(sortData);
-    } else {
-      const newData = sortData?.filter((row) => {
-        return row.userId._id === e.value;
-      });
-      setData(newData);
-    }
-    setSort(e?.value);
+    const selectedValue = e?.value;
+    setSort(selectedValue);
   };
+
   const toggleModal = () => {
     setView(false);
   };
+
   const viewData = (row) => {
     setViewUserEvent(row);
     setView(true);
@@ -104,13 +100,14 @@ const Index = () => {
     }),
   };
 
-  if (loading) {
+  if (dataLoading) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
         <Spinner size={75} color="#ffffff" />
       </div>
     );
   }
+
   return (
     <Fragment>
       <div className="flex justify-between mt-4 space-x-4">
@@ -118,7 +115,7 @@ const Index = () => {
           type="text"
           placeholder="Search By Event Name"
           onChange={handleChange}
-          className=" p-3 w-full h-12 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="p-3 w-full h-12 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
         />
         <Select
           className="w-80 h-12 focus:ring-2 focus:ring-indigo-500"
@@ -132,7 +129,7 @@ const Index = () => {
       <div className="my-5">
         <Table
           columns={userParticipateEventTable}
-          data={data || []}
+          data={data}
           viewData={viewData}
         />
       </div>
