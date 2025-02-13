@@ -4,12 +4,12 @@ import moment from "moment";
 import { Form, Label, Input, Button, FormText } from "reactstrap";
 import { useMutation, useQuery } from "@apollo/client";
 import { ADD_EVENT, EDIT_EVENT } from "./mutation";
-import { GET_ALL_EVENTS } from "../Dashboard/query";
 import DatePicker from "../../components/DatePicker";
 import { toast } from "react-toastify";
 import Spinner from "../../components/Spinner";
 
 const Index = ({ toggleModal, editEvent, setEditEvent, refetch }) => {
+  console.log(editEvent);
   const [createEvent, { loading }] = useMutation(ADD_EVENT);
   const [EditEvent, { loading: editLoading }] = useMutation(EDIT_EVENT, {
     context: {
@@ -51,7 +51,7 @@ const Index = ({ toggleModal, editEvent, setEditEvent, refetch }) => {
     data.eventdate = moment(data.eventdate).format("DD MMM YYYY");
     if (!editEvent) {
       if (data) {
-        createEvent({ variables: { eventNew: data } })
+        createEvent({ variables: { input: data } })
           .then(() => {
             refetch();
             toast.success("Your Event Successfully Added", { autoClose: 1000 });
@@ -59,8 +59,7 @@ const Index = ({ toggleModal, editEvent, setEditEvent, refetch }) => {
           .catch((error) => {
             toast.error(error?.message, { autoClose: 2000 });
           });
-      }
-      else {
+      } else {
         toast.error("Please fill all the fields", { autoClose: 2000 });
       }
     } else {
@@ -74,15 +73,14 @@ const Index = ({ toggleModal, editEvent, setEditEvent, refetch }) => {
           .catch((error) => {
             toast.error(error?.message, { autoClose: 2000 });
           });
-      }
-      else {
+      } else {
         toast.error("Please fill all the fields", { autoClose: 2000 });
       }
     }
     toggleModal();
   };
 
-  if(loading || editLoading){
+  if (loading || editLoading) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
         <Spinner size={75} color="#ffffff" />
@@ -190,9 +188,7 @@ const Index = ({ toggleModal, editEvent, setEditEvent, refetch }) => {
                   onChange={(e) => onChange(e[0])}
                   placeholder="Enter Event Date"
                   className="mt-2 p-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-300"
-                  value={
-                    value || (edit?.eventdate ? moment(edit.eventdate, "DD MMM YYYY").toDate() : null)
-                  }
+                  value={value || edit?.eventdate}
                 />
               )}
             />
@@ -202,6 +198,7 @@ const Index = ({ toggleModal, editEvent, setEditEvent, refetch }) => {
               </FormText>
             )}
           </div>
+          {console.log(moment(edit?.eventdate, "DD MMM YYYY").toDate())}
 
           <div className="grid grid-cols-2 gap-6">
             <div>

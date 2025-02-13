@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const ADD_EVENT = gql`
-  mutation AddEvent($eventNew: eventInput!) {
-    createEvent(eventNew: $eventNew) {
+  mutation AddEvent($input: eventInput!) {
+    createEvent(input: $input) {
       address
       ename
       eventdate

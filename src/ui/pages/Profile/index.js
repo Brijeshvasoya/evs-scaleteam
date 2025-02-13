@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Label, Button, Input, FormText } from "reactstrap";
 import { useForm, Controller } from "react-hook-form";
-import { Camera, Trash2 } from "react-feather";
+import { Camera, XCircle } from "react-feather";
 import { toast } from "react-toastify";
 import { useCookies } from "react-cookie";
 import { useMutation } from "@apollo/client";
@@ -22,7 +22,7 @@ const Index = () => {
   const [cancel, setCancel] = useState(false);
   const [profilePicture, setProfilePicture] = useState(null);
   const [, removeCookie] = useCookies();
-  
+
   const {
     control,
     handleSubmit,
@@ -49,8 +49,7 @@ const Index = () => {
     if (localProfilePicture) {
       setProfilePicture(localProfilePicture);
       setCancel(true);
-    } 
-    else if (activeUser?.profilePicture) {
+    } else if (activeUser?.profilePicture) {
       setProfilePicture(activeUser.profilePicture);
       setCancel(true);
     }
@@ -64,7 +63,7 @@ const Index = () => {
       setValue("dob", parsedDob);
       setValue("age", activeUser?.age);
     }
-  }, [activeUser,setValue]);
+  }, [activeUser, setValue]);
 
   useEffect(() => {
     if (base64Url) {
@@ -122,17 +121,38 @@ const Index = () => {
   };
 
   const removeImg = () => {
-    const updatedUser = { ...activeUser, profilePicture: null };
-    localStorage.setItem("active_user", JSON.stringify(updatedUser));
-    dispatch({ type: "LOGIN_USER", payload: { data: updatedUser } });
-    setBase64Url(null);
-    setProfilePicture(null);
-    setCancel(false);
-    const fileInput = document.getElementById("upload-image");
-    if (fileInput) {
-      fileInput.value = "";
-    }
-    toast.success("Your Profile Photo is Removed", { autoClose: 1000 });
+    ConfirmationModal(
+      "warning",
+      "Are you sure?",
+      "You won't be able to revert this!",
+      "Yes, delete it!",
+      true
+    ).then((result) => {
+      if (result.isConfirmed) {
+        ConfirmationModal(
+          "success",
+          "Deleted!",
+          "Your Profile Photo is Removed",
+          "ok",
+          false
+        ).then(() => {
+          const updatedUser = { ...activeUser, profilePicture: null };
+          localStorage.setItem("active_user", JSON.stringify(updatedUser));
+          dispatch({ type: "LOGIN_USER", payload: { data: updatedUser } });
+          setBase64Url(null);
+          setProfilePicture(null);
+          setCancel(false);
+          const fileInput = document.getElementById("upload-image");
+          if (fileInput) {
+            fileInput.value = "";
+          }
+          toast.success("Your Profile Photo is Removed", { autoClose: 1000 });
+        });
+      }
+    })
+    .catch((error) => {
+      toast.error(error?.message, { autoClose: 2000 });
+    });
   };
 
   const handleCancel = () => {
@@ -187,6 +207,15 @@ const Index = () => {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-10">
           <div>
+            {cancel && (
+              <Label
+                htmlFor="remove-image"
+                className="cursor-pointer text-slate-800 relative left-20 top-4"
+                onClick={removeImg}
+              >
+                <XCircle className="text-red-600" />
+              </Label>
+            )}
             <img
               src={
                 base64Url ||
@@ -204,15 +233,6 @@ const Index = () => {
               className="hidden"
               id="upload-image"
             />
-            {cancel && (
-              <Label
-                htmlFor="remove-image"
-                className="cursor-pointer relative left-12 top-2 text-slate-800"
-                onClick={removeImg}
-              >
-                <Trash2 className="text-red-600" />
-              </Label>
-            )}
             <Label
               htmlFor="upload-image"
               className="cursor-pointer relative left-20 -top-4 text-slate-800"

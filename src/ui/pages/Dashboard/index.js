@@ -8,15 +8,14 @@ import { eventTable, participateEventTable } from "../../components/Constant";
 import CardModal from "../../components/Modal/CardModal";
 import Card from "../../components/Card";
 import Ticket from "../../components/Ticket";
-import { useQuery } from "@apollo/client";
+import { useQuery, useLazyQuery } from "@apollo/client";
 import { GET_ALL_EVENTS, GET_PARTICIPANTS } from "../Dashboard/query";
 
 const Index = () => {
   const { activeUser } = useSelector((state) => state.user);
   const { data: getEvents, loading } = useQuery(GET_ALL_EVENTS);
-  const { data: getParticipants } = useQuery(
+  const [getParticipants, { data: getParticipantsData, loading: participantsLoading }] = useLazyQuery(
     GET_PARTICIPANTS,
-    { variables: { userId: activeUser?._id } },
     {
       context: {
         headers: {
@@ -29,9 +28,10 @@ const Index = () => {
   const [data, setData] = useState(getEvents?.events);
   const [view, setView] = useState(true);
   const [viewEvent, setViewEvent] = useState();
-  const [option, setOption] = useState(eventTable);
+  const [columns, setColumns] = useState(eventTable);
   const [ticket, setTicket] = useState(false);
   const [showTicket, setShowTicket] = useState(false);
+  const [show, setShow] = useState(false);
 
   const formatEvents = (events) => {
     return events.map((event) => ({
@@ -40,23 +40,47 @@ const Index = () => {
     }));
   };
 
+  const formatParticipants = (participants) => {
+    return participants.map((participant) => ({
+      ...participant,
+      eventId: {
+        ...participant.eventId,
+        eventdate: moment(parseInt(participant.eventId?.eventdate)).format(
+          "DD MMM YYYY"
+        ),
+      },
+    }));
+  };
+
   useEffect(() => {
     if (role !== "admin" && getEvents?.events) {
       const events = formatEvents(getEvents.events);
       setData(events);
     }
-  }, [getEvents?.events, role]);
+    if(getParticipantsData?.participate){
+      const filterEvent = formatParticipants(getParticipantsData?.participate);
+      setData(filterEvent);
+      setColumns(participateEventTable);
+      setShowTicket(true);
+    }
+  }, [getEvents?.events, role,getParticipantsData]);
 
   const toggleViewModel = () => {
     setView(true);
     setTicket(false);
     setShowTicket(false);
+    setShow(false);
   };
   const toggleTicketModel = () => {
     setView(true);
     setTicket(false);
+    setShow(false);
   };
   const viewEventData = (row) => {
+    const disable = getParticipantsData?.participate?.some((item) => item.eventId._id === row._id);
+    if (disable) {
+      setShow(true);
+    }
     setViewEvent(row);
     setView(false);
     setTicket(false);
@@ -65,34 +89,31 @@ const Index = () => {
     setViewEvent(row);
     setTicket(true);
     setView(true);
+    setShow(false);
   };
   const allEvent = () => {
     const events = formatEvents(getEvents.events);
     setData(events);
-    setOption(eventTable);
+    setColumns(eventTable);
     setShowTicket(false);
+    setShow(false);
   };
   const participatedEvent = () => {
+    getParticipants({ 
+      variables: { userId: activeUser?._id } 
+    });
     if (
-      !getParticipants?.participate ||
-      getParticipants.participate.length === 0
+      !getParticipantsData?.participate ||
+      getParticipantsData.participate.length === 0
     ) {
       setData([]);
-      setOption(participateEventTable);
+      setColumns(participateEventTable);
       setShowTicket(true);
       return;
     }
-   const filterEvent =  getParticipants?.participate.map((item) => ({
-      ...item,
-      eventId: {
-        ...item.eventId,
-        eventdate: moment(parseInt(item.eventId?.eventdate)).format(
-          "DD MMM YYYY"
-        ),
-      },
-    }));
+    const filterEvent = formatParticipants(getParticipantsData?.participate);
     setData(filterEvent);
-    setOption(participateEventTable);
+    setColumns(participateEventTable);
     setShowTicket(true);
   };
   const upComingEvent = () => {
@@ -103,10 +124,10 @@ const Index = () => {
     });
     const filterEvents = formatEvents(filterEvent);
     setData(filterEvents);
-    setOption(eventTable);
+    setColumns(eventTable);
     setShowTicket(false);
   };
-  if (loading) {
+  if (loading || participantsLoading) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
         <Spinner size={75} color="#ffffff" />
@@ -143,7 +164,7 @@ const Index = () => {
       </div>
       <div className="my-5">
         <Table
-          columns={option}
+          columns={columns}
           data={data || []}
           viewData={showTicket ? viewTicketData : viewEventData}
         />
@@ -153,7 +174,7 @@ const Index = () => {
         toggleModal={toggleViewModel}
         title="Event Details"
       >
-        <Card item={viewEvent} toggleModal={toggleViewModel} />
+        <Card item={viewEvent} toggleModal={toggleViewModel} show={show} />
       </CardModal>
 
       <CardModal

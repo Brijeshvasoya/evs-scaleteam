@@ -7,7 +7,6 @@ import { SIGN_UP } from "./mutation";
 import InputPasswordToggle from "../../components/input-password-toggle";
 import DatePicker from "../../components/DatePicker";
 import Spinner from "../../components/Spinner";
-// import { useDispatch, useSelector } from "react-redux";
 
 import {
   CardTitle,
@@ -22,9 +21,7 @@ import { useForm, Controller } from "react-hook-form";
 
 const Index = () => {
   const navigate = useNavigate();
-  // const dispatch = useDispatch();
-  // const { userData } = useSelector((state) => state.user);
-const [signUp, { loading }] = useMutation(SIGN_UP);
+  const [signUp, { loading }] = useMutation(SIGN_UP);
 
   const source = require(`../../../logo.png`);
   const cover = require(`../../../assets/images/pages/sign-up.avif`);
@@ -44,7 +41,7 @@ const [signUp, { loading }] = useMutation(SIGN_UP);
     data.email = data.email.toLowerCase().trim();
     data.password = data.password.trim();
 
-    if(data){
+    if (data) {
       const input = {
         fname: data.fname,
         lname: data.lname,
@@ -53,16 +50,18 @@ const [signUp, { loading }] = useMutation(SIGN_UP);
         dob: data.dob,
         age: parseInt(data.age),
       };
-      signUp({ variables: { userNew: input } }).then(async({ data }) => {
-        if (data?.createUser) {
-          toast.success("You are Register Successfully", { autoClose: 1000 });
-          navigate("/");
-        } else {
-          toast.error("There are Some error in Rgister", { autoClose: 2000 });
-        }
-      }).catch((error) => {
-        toast.error(error?.message, { autoClose: 2000 });
-      });
+      signUp({ variables: { input: input } })
+        .then(async ({ data }) => {
+          if (data?.createUser) {
+            toast.success("You are Register Successfully", { autoClose: 1000 });
+            navigate("/");
+          } else {
+            toast.error("There are Some error in Rgister", { autoClose: 2000 });
+          }
+        })
+        .catch((error) => {
+          toast.error(error?.message, { autoClose: 2000 });
+        });
     }
     reset();
   };

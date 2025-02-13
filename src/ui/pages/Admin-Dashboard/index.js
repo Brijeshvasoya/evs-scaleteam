@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { Button, Input } from "reactstrap";
 import Select from "react-select";
 import Table from "../../components/Table";
@@ -6,8 +6,8 @@ import AddEvent from "../AddEvent";
 import Modal from "../../components/Modal";
 import { useQuery, useMutation } from "@apollo/client";
 import Spinner from "../../components/Spinner";
-import { eventTable } from "../../components/Constant";
 import ConfirmationModal from "../../components/Alert";
+import { eventTable } from "../../components/Constant";
 import { toast } from "react-toastify";
 import { convertDate } from "../../../Utils/convertDate";
 import { GET_ALL_EVENTS } from "../Dashboard/query";
@@ -40,7 +40,7 @@ const Index = () => {
       setData(events);
       setDataloading(loading)
     }
-  }, [eventData]);
+  }, [eventData, loading]);
 
   const toggleModal = () => {
     setModalOpen(!modalOpen);
@@ -137,8 +137,8 @@ const Index = () => {
   }
 
   return (
-    <>
-      <div className="flex justify-between mt-4 space-x-4">
+    <Fragment className="container mx-auto px-4 py-4">
+      <div className="flex justify-between mt-8 space-x-4">
         <Input
           type="text"
           value={searchTerm}
@@ -185,7 +185,7 @@ const Index = () => {
           />
         </Modal>
       )}
-    </>
+    </Fragment>
   );
 };
 

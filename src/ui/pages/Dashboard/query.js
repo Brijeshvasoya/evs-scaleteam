@@ -23,6 +23,7 @@ export const GET_PARTICIPANTS = gql`
     participate(userId: $userId) {
       _id
       eventId {
+        _id
         ename
         eventdate
         hname

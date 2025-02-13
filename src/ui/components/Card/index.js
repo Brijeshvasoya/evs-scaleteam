@@ -2,7 +2,7 @@ import React, { Fragment } from "react";
 import { Button } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 
-const CardComponent = ({ item }) => {
+const CardComponent = ({ item, show }) => {
   const navigate = useNavigate();
   return (
     <Fragment>
@@ -25,9 +25,7 @@ const CardComponent = ({ item }) => {
           </div>
           <div>
             <div className="text-sm text-gray-700">
-              <span>
-              {item?.eventdate}
-              </span>
+              <span>{item?.eventdate}</span>
             </div>
           </div>
           <div>
@@ -63,17 +61,19 @@ const CardComponent = ({ item }) => {
               </div>
             </div>
           </div>
-          <div className="flex justify-end space-x-3 mt-4">
-            <Button
-              type="button"
-              color="primary"
-              block
-              onClick={() => navigate(`/participate/${item?._id}`)}
-              className="w-32 py-0 h-12 text-white font-medium rounded-lg bg-slate-800 hover:bg-slate-700 focus:outline-none"
-            >
-              Participate
-            </Button>
-          </div>
+          {!show && (
+            <div className="flex justify-end space-x-3 mt-4">
+              <Button
+                type="button"
+                color="primary"
+                block
+                onClick={() => navigate(`/participate/${item?._id}`)}
+                className="w-32 py-0 h-12 text-white font-medium rounded-lg bg-slate-800 hover:bg-slate-700 focus:outline-none"
+              >
+                Participate
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </Fragment>

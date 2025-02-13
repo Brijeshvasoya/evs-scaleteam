@@ -1,6 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Input } from "reactstrap";
-import Select from "react-select";
 import { useQuery } from "@apollo/client";
 import { GET_USER_EVENT } from "./query";
 import moment from "moment";
@@ -11,8 +10,6 @@ import CardModal from "../../components/Modal/CardModal";
 import UserEvent from "../../components/UserEventCard";
 
 const Index = () => {
-  const [options, setOptions] = useState();
-  const [sort, setSort] = useState("All");
   const [data, setData] = useState();
   const [viewUserEvent, setViewUserEvent] = useState();
   const [view, setView] = useState(false);
@@ -21,10 +18,9 @@ const Index = () => {
 
   const { loading, data: participate } = useQuery(GET_USER_EVENT, {
     variables: {
-      searchTerm: searchTerm?.trim() || undefined,
-      userId: sort !== "All" ? sort : undefined
+      searchTerm: searchTerm?.trim() || undefined
     },
-    fetchPolicy: 'network-only'
+    fetchPolicy: "network-only",
   });
 
   useEffect(() => {
@@ -33,45 +29,28 @@ const Index = () => {
         ...item,
         eventId: {
           ...item.eventId,
-          eventdate: moment(parseInt(item.eventId?.eventdate)).format(
-            "DD MMM YYYY"
-          ),
+          eventdate: moment(parseInt(item.eventId?.eventdate)).format("DD MMM YYYY"),
         },
       }));
 
-      const uniqueUsers = new Set();
-      const eventOption = participate.participates.reduce((acc, item) => {
-        const userId = item.userId?._id;
-        const userName = `${item.userId?.fname} ${item.userId?.lname}`.trim();
-        
-        if (userId && !uniqueUsers.has(userId)) {
-          uniqueUsers.add(userId);
-          acc.push({ 
-            value: userId, 
-            label: userName 
-          });
-        }
-        return acc;
-      }, []);
-      
-      setOptions([{ value: "All", label: "All" }, ...eventOption]);
       setData(userEventData);
       setDataLoading(loading);
     } else {
       setData([]);
-      setOptions([{ value: "All", label: "All" }]);
     }
-  }, [participate, loading, searchTerm, sort]);
+  }, [participate, loading, searchTerm]);
+  
 
   const handleChange = (e) => {
     const term = e.target.value?.toLowerCase().trim();
     setSearchTerm(term);
   };
 
-  const handleSelectChange = (e) => {
-    const selectedValue = e?.value;
-    setSort(selectedValue);
-  };
+  // const handleSelectChange = (e) => {
+  //   const selectedValue = e?.value;
+  //   setSort(selectedValue);
+  //   setSearchTerm(e?.label);
+  // };
 
   const toggleModal = () => {
     setView(false);
@@ -82,23 +61,23 @@ const Index = () => {
     setView(true);
   };
 
-  const customStyles = {
-    control: (base, state) => ({
-      ...base,
-      boxShadow: state.isFocused ? "0 0 0 2px #6366f1" : "none",
-      minHeight: 48,
-      height: 48,
-    }),
-    option: (base, state) => ({
-      ...base,
-      cursor: "pointer",
-      backgroundColor: state.isFocused ? "#f3f2f0" : "",
-      color: state.isFocused ? "#2d3748" : "",
-      "&:hover": {
-        backgroundColor: "#f3f2f0",
-      },
-    }),
-  };
+  // const customStyles = {
+  //   control: (base, state) => ({
+  //     ...base,
+  //     boxShadow: state.isFocused ? "0 0 0 2px #6366f1" : "none",
+  //     minHeight: 48,
+  //     height: 48,
+  //   }),
+  //   option: (base, state) => ({
+  //     ...base,
+  //     cursor: "pointer",
+  //     backgroundColor: state.isFocused ? "#f3f2f0" : "",
+  //     color: state.isFocused ? "#2d3748" : "",
+  //     "&:hover": {
+  //       backgroundColor: "#f3f2f0",
+  //     },
+  //   }),
+  // };
 
   if (dataLoading) {
     return (
@@ -110,23 +89,27 @@ const Index = () => {
 
   return (
     <Fragment>
-      <div className="flex justify-between mt-4 space-x-4">
-        <Input
-          type="text"
-          placeholder="Search By Event Name"
-          onChange={handleChange}
-          className="p-3 w-full h-12 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
-        <Select
-          className="w-80 h-12 focus:ring-2 focus:ring-indigo-500"
-          styles={customStyles}
-          value={options?.find((option) => option?.value === sort)}
-          onChange={handleSelectChange}
-          options={options}
-          placeholder="Search By User Name"
-        />
+      <div className="flex flex-col md:flex-row mt-6 justify-between space-y-4 md:space-y-0 md:space-x-4">
+        <div className="flex-grow">
+          <Input
+            type="text"
+            placeholder="Search By Event Name"
+            onChange={handleChange}
+            className="w-full h-12 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 px-3"
+          />
+        </div>
+        {/* <div className="w-80 h-12 focus:ring-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-indigo-500">
+          <Select
+            className="w-auto"
+            styles={customStyles}
+            value={options?.find((option) => option?.value === sort)}
+            onChange={handleSelectChange}
+            options={options}
+            placeholder="Search By User Name"
+          />
+        </div> */}
       </div>
-      <div className="my-5">
+      <div className="my-5 overflow-x-auto">
         <Table
           columns={userParticipateEventTable}
           data={data}
