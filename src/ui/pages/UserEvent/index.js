@@ -20,7 +20,6 @@ const Index = () => {
     variables: {
       searchTerm: searchTerm?.trim() || undefined
     },
-    fetchPolicy: "network-only",
   });
 
   useEffect(() => {

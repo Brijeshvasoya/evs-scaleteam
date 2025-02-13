@@ -66,6 +66,7 @@ const Table = ({
     if (handleActiveUser) {
       baseColumns.push({
         name: "Status",
+        minWidth: "80px",
         selector: (row) =>
           row.isDeleted ? "Deleted" : row.isVerified ? "Active" : "Inactive",
         cell: (row) =>

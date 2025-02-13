@@ -37,3 +37,21 @@ export const GET_PARTICIPANTS = gql`
     }
   }
 `;
+
+export const GET_UPCOMING_EVENTS = gql`
+  query UpcomingEvents {
+    upcomingEvents {
+      _id
+      ename
+      hname
+      eventdate
+      hno
+      address
+      ticket {
+        vipticket
+        vvipticket
+        goldticket
+      }
+    }
+  }
+`;

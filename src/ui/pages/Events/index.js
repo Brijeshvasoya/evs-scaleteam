@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import moment from "moment";
 import CardComponent from "../../components/Card";
-import { GET_ALL_EVENTS, GET_PARTICIPANTS } from "../Dashboard/query";
+import { GET_UPCOMING_EVENTS, GET_PARTICIPANTS } from "../Dashboard/query";
 import Spinner from "../../components/Spinner";
 import { useSelector } from "react-redux";
 
 const EventsPage = () => {
-  const { loading, data } = useQuery(GET_ALL_EVENTS);
+  const { loading, data } = useQuery(GET_UPCOMING_EVENTS);
   const { activeUser } = useSelector((state) => state.user);
   const { data: getParticipants } = useQuery(
     GET_PARTICIPANTS,
@@ -22,9 +22,8 @@ const EventsPage = () => {
   );
   const [filterEvent, setFilterEvent] = useState([]);
 
-  const eventData = data?.events;
-
   useEffect(() => {
+    const eventData = data?.upcomingEvents;
     const filterEvent = eventData?.filter((item) => {
       const eventDate = moment(parseInt(item?.eventdate));
       const today = moment();

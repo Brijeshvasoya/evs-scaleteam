@@ -9,12 +9,16 @@ import CardModal from "../../components/Modal/CardModal";
 import Card from "../../components/Card";
 import Ticket from "../../components/Ticket";
 import { useQuery, useLazyQuery } from "@apollo/client";
-import { GET_ALL_EVENTS, GET_PARTICIPANTS } from "../Dashboard/query";
+import {
+  GET_ALL_EVENTS,
+  GET_PARTICIPANTS,
+  GET_UPCOMING_EVENTS,
+} from "../Dashboard/query";
 
 const Index = () => {
   const { activeUser } = useSelector((state) => state.user);
   const { data: getEvents, loading } = useQuery(GET_ALL_EVENTS);
-  const [getParticipants, { data: getParticipantsData, loading: participantsLoading }] = useLazyQuery(
+  const [getParticipants, { data: getParticipantsData}] = useLazyQuery(
     GET_PARTICIPANTS,
     {
       context: {
@@ -24,6 +28,9 @@ const Index = () => {
       },
     }
   );
+
+  const [getUpcomingEvents, { data: getUpcomingEventsData}] = useLazyQuery(GET_UPCOMING_EVENTS);
+
   const role = activeUser?.role || "";
   const [data, setData] = useState(getEvents?.events);
   const [view, setView] = useState(true);
@@ -34,14 +41,14 @@ const Index = () => {
   const [show, setShow] = useState(false);
 
   const formatEvents = (events) => {
-    return events.map((event) => ({
+    return events?.map((event) => ({
       ...event,
       eventdate: moment(parseInt(event.eventdate)).format("DD MMM YYYY"),
     }));
   };
 
   const formatParticipants = (participants) => {
-    return participants.map((participant) => ({
+    return participants?.map((participant) => ({
       ...participant,
       eventId: {
         ...participant.eventId,
@@ -63,7 +70,13 @@ const Index = () => {
       setColumns(participateEventTable);
       setShowTicket(true);
     }
-  }, [getEvents?.events, role,getParticipantsData]);
+    if(getUpcomingEventsData?.upcomingEvents){
+      const filterEvents = formatEvents(getUpcomingEventsData?.upcomingEvents);
+      setData(filterEvents);
+      setColumns(eventTable);
+      setShowTicket(false);
+    }
+  }, [getEvents?.events, role,getParticipantsData,getUpcomingEventsData]);
 
   const toggleViewModel = () => {
     setView(true);
@@ -116,18 +129,15 @@ const Index = () => {
     setColumns(participateEventTable);
     setShowTicket(true);
   };
-  const upComingEvent = () => {
-    const filterEvent = getEvents?.events.filter((item) => {
-      const eventDate = moment(parseInt(item.eventdate));
-      const today = moment();
-      return eventDate.isSameOrAfter(today, "day");
-    });
-    const filterEvents = formatEvents(filterEvent);
+  const upComingEvent = (e) => {
+    e.preventDefault();
+    getUpcomingEvents();
+    const filterEvents = formatEvents(getUpcomingEventsData?.upcomingEvents);
     setData(filterEvents);
     setColumns(eventTable);
     setShowTicket(false);
   };
-  if (loading || participantsLoading) {
+  if (loading) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
         <Spinner size={75} color="#ffffff" />
